@@ -2,11 +2,8 @@ import 'dart:async';
 import 'dart:isolate';
 import 'dart:ui';
 
-import 'package:ade/timer_service/handler/timer_task_handler.dart';
-import 'package:ade/timer_service/utils/ForegroundServiceUtils.dart';
-import 'package:ade/timer_service/utils/timer_service_notifications_utils.dart';
+import 'package:ade/timer_service/utils/foreground_service_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 
 createTimerServiceForApp(DateTime finishTime, String appName) async {
   debugPrint("Timer Service started!");
@@ -14,7 +11,7 @@ createTimerServiceForApp(DateTime finishTime, String appName) async {
   initNotificationForegroundTask(finishTime, appName);
 
   // Initialize the receiver port
-  final receivePort = await FlutterForegroundTask.receivePort;
+  final receivePort = await getForegroundServiceReceivePort();
 
   // Start the foreground Service
   _startForegroundTask(receivePort, appName, finishTime);
@@ -26,19 +23,10 @@ void startCallback() async{
   WidgetsFlutterBinding.ensureInitialized();
   DartPluginRegistrant.ensureInitialized();
 
-  // The setTaskHandler function must be called to handle the task in the background.
-  String? appName = await FlutterForegroundTask.getData(key: APP_NAME_CUSTOM_DATA_KEY) as String?;
-  String? finishTimeString = await FlutterForegroundTask.getData(key: FINISH_TIME_CUSTOM_DATA_KEY) as String?;
+  // Start the Task through the handler..
+  // Make sure appName and finishTime are initialized!
+  setTaskHandlerWithSessionData();
 
-  if(appName == null || finishTimeString == null){
-    debugPrint("Appname/FinishTime could not be received from custom data!");
-    return;
-  }
-
-  DateTime finishTime = DateTime.parse(finishTimeString);
-
-  // Start the Task through the handler
-  FlutterForegroundTask.setTaskHandler(TimerTaskHandler(appName, finishTime));
 }
 
 Future<bool> _startForegroundTask(ReceivePort? receivePort, String appName, DateTime finishTime) async {
@@ -55,21 +43,14 @@ Future<bool> _startForegroundTask(ReceivePort? receivePort, String appName, Date
 
   // Will Override service if already running
   bool reqResult;
-  if (await FlutterForegroundTask.isRunningService) {
-    reqResult = await FlutterForegroundTask.clearAllData();
-    reqResult = await FlutterForegroundTask.stopService();
-  }
+  await killOngoingServiceIfAny();
 
   // Start the Foreground Service
-  reqResult = await FlutterForegroundTask.startService(
-    notificationTitle:  getNotificationTitle(appName, finishTime),
-    notificationText: getNotificationDescription(DateTime.now(), finishTime),
-    callback: startCallback,
-  );
+  reqResult = await startForegroundService(appName, finishTime, startCallback);
 
   // Check if it was successful and register listener
   if (reqResult) {
-    receivePort = await FlutterForegroundTask.receivePort;
+    receivePort = await getForegroundServiceReceivePort();
   }
   else{
     debugPrint("Timer foreground service did not start!");

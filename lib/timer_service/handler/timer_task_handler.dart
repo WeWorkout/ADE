@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:isolate';
 
-import 'package:ade/timer_service/utils/ForegroundServiceUtils.dart';
+import 'package:ade/timer_service/utils/foreground_service_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 
@@ -20,7 +20,7 @@ class TimerTaskHandler extends TaskHandler {
 
       if(finishTime.isBefore(currentTime) || finishTime.isAtSameMomentAs(currentTime)){
         timer.cancel();
-        _finalizeTimerService(appName);
+        await _finalizeTimerService(appName);
         isDone = true;
       }
       if(!isDone){
@@ -42,13 +42,7 @@ class TimerTaskHandler extends TaskHandler {
   @override
   Future<void> onDestroy(DateTime timestamp, SendPort? sendPort) async {
     // You can use the clearAllData function to clear all the stored data.
-    if(await FlutterForegroundTask.isRunningService){
-      bool dataCleared = await FlutterForegroundTask.clearAllData();
-      bool serviceStopped = await FlutterForegroundTask.stopService();
-      if(dataCleared && serviceStopped){
-        debugPrint("Something went wrong in OnDestroy()");
-      }
-    }
+    await killOngoingServiceIfAny();
   }
 
   @override
@@ -61,11 +55,10 @@ class TimerTaskHandler extends TaskHandler {
   }
 }
 
-void _finalizeTimerService(String appName){
+_finalizeTimerService(String appName) async{
   debugPrint("Timer for ${appName} is complete!");
 
   //ToDo: Re-trigger Alert Window to extend
 
-  FlutterForegroundTask.clearAllData();
-  FlutterForegroundTask.stopService();
+  await killOngoingServiceIfAny();
 }

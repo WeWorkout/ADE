@@ -1,4 +1,7 @@
+import 'dart:isolate';
+import 'package:ade/timer_service/handler/timer_task_handler.dart';
 import 'package:ade/timer_service/utils/timer_service_notifications_utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 
@@ -40,6 +43,29 @@ void initNotificationForegroundTask(DateTime finishTime, String appName) {
   );
 }
 
+Future<bool> startForegroundService(String appName, DateTime finishTime, Function startCallBack){
+  return FlutterForegroundTask.startService(
+    notificationTitle:  getNotificationTitle(appName, finishTime),
+    notificationText: getNotificationDescription(DateTime.now(), finishTime),
+    callback: startCallBack,
+  );
+}
+
+void setTaskHandlerWithSessionData() async{
+  // The setTaskHandler function must be called to handle the task in the background.
+  String? appName = await FlutterForegroundTask.getData(key: APP_NAME_CUSTOM_DATA_KEY) as String?;
+  String? finishTimeString = await FlutterForegroundTask.getData(key: FINISH_TIME_CUSTOM_DATA_KEY) as String?;
+
+  if(appName == null || finishTimeString == null){
+    debugPrint("AppName/FinishTime could not be received from custom data!");
+    return;
+  }
+
+  DateTime finishTime = DateTime.parse(finishTimeString);
+
+  FlutterForegroundTask.setTaskHandler(TimerTaskHandler(appName, finishTime));
+}
+
 Future<bool> updateForegroundServiceNotification(String appName, DateTime finishTime, DateTime currentTime){
   return FlutterForegroundTask.updateService(
       notificationTitle: getNotificationTitle(appName, finishTime),
@@ -53,10 +79,21 @@ Future<bool> storeForegroundSessionData(String appName, DateTime finishTime) asy
   bool appNameSet = await FlutterForegroundTask.saveData(key: APP_NAME_CUSTOM_DATA_KEY, value: appName);
   bool finishTimeSet = await FlutterForegroundTask.saveData(key: FINISH_TIME_CUSTOM_DATA_KEY, value: finishTime.toString());
   if(!(appNameSet && finishTimeSet)){
-    debugPrint("AppName/FinishTime could not be set in session!");
+    debugPrint("AppName/FinishTime could not be set in custom data!");
     return false;
   }
   return true;
+}
+
+killOngoingServiceIfAny() async{
+  if (await FlutterForegroundTask.isRunningService) {
+    bool isDataCleared = await FlutterForegroundTask.clearAllData();
+    bool isServiceStopped = await FlutterForegroundTask.stopService();
+
+    if(!(isDataCleared && isServiceStopped)){
+      debugPrint("Issue in killing service: $isDataCleared  $isServiceStopped");
+    }
+  }
 }
 
 Future<bool> checkForOverlayPermissions() async{
@@ -68,4 +105,22 @@ Future<bool> checkForOverlayPermissions() async{
     }
   }
   return true;
+}
+
+Future<ReceivePort?> getForegroundServiceReceivePort() async{
+  return FlutterForegroundTask.receivePort;
+}
+
+Future<bool> isTimerServiceRunning() async{
+  return FlutterForegroundTask.isRunningService;
+}
+
+Future<String?> getCurrentRunningAppName() async{
+  if(await isTimerServiceRunning()){
+    String? appName = await FlutterForegroundTask.getData(key: APP_NAME_CUSTOM_DATA_KEY) as String?;
+    return appName;
+  }
+  else{
+    return null;
+  }
 }
