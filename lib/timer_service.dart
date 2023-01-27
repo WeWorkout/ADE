@@ -1,5 +1,3 @@
-
-
 import 'dart:async';
 import 'dart:isolate';
 
@@ -28,8 +26,7 @@ class MyTaskHandler extends TaskHandler {
     _sendPort = sendPort;
 
     // You can use the getData function to get the stored data.
-    final customData =
-    await FlutterForegroundTask.getData<String>(key: 'customData');
+    final customData = await FlutterForegroundTask.getData<String>(key: 'customData');
     print('customData: $customData');
   }
 
@@ -109,8 +106,7 @@ void _initForegroundTask() {
 
 Future<bool> _startForegroundTask(ReceivePort? receivePort) async {
   if (!await FlutterForegroundTask.canDrawOverlays) {
-    final isGranted =
-    await FlutterForegroundTask.openSystemAlertWindowSettings();
+    final isGranted = await FlutterForegroundTask.openSystemAlertWindowSettings();
     if (!isGranted) {
       print('SYSTEM_ALERT_WINDOW permission denied!');
       return false;

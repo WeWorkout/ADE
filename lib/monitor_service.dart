@@ -1,9 +1,7 @@
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:ui';
 
-import 'package:ade/alert_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
@@ -13,6 +11,7 @@ import 'package:usage_stats/usage_stats.dart';
 onServiceStart(ServiceInstance service) {
   WidgetsFlutterBinding.ensureInitialized();
   DartPluginRegistrant.ensureInitialized();
+  UsageStats.grantUsagePermission();
 
   Set<String> appNames = {};
   Map<String, UsageInfo> usageInfo = {};
@@ -34,9 +33,10 @@ onServiceStart(ServiceInstance service) {
     print('timer callback');
   });
 
-  int count = 0;
   Timer.periodic(const Duration(seconds: 2), (timer) {
-    print('periodic');
+    if(timer.tick % 10 == 0){
+      debugPrint("[Monitoring Service] Periodic Service is active!");
+    }
     process(service, appNames, usageInfo);
   });
 
@@ -49,19 +49,18 @@ process(ServiceInstance service, Set<String> appPackageNames, Map<String, UsageI
   for(String appName in appPackageNames) {
     if(usageStats.containsKey(appName) && previousUsageStats.containsKey(appName)) {
       if(usageStats[appName]!.lastTimeUsed != previousUsageStats[appName]!.lastTimeUsed) {
-        print("invoked");
         service.invoke('showDialog');
         FlutterOverlayWindow.showOverlay();
         //FlutterOverlayWindow.shareData(service);
         //showOverlayWindow(service);
       }
       else {
-        print("handle other conditions in internal");
+        // print("handle other conditions in internal");
       }
     } else if(usageStats.containsKey(appName) || previousUsageStats.containsKey(appName)) {
       service.invoke('showDialog');
     } else {
-      print("handle other conditions in external");
+      // print("handle other conditions in external");
     }
   }
 
@@ -70,8 +69,6 @@ process(ServiceInstance service, Set<String> appPackageNames, Map<String, UsageI
 }
 
 Future<Map<String, UsageInfo>> _getUsageStats() async {
-
-  UsageStats.grantUsagePermission();
 
   DateTime endDate = DateTime.now();
   DateTime startDate = endDate.subtract(const Duration(hours: 1));

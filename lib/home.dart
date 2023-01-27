@@ -46,16 +46,16 @@ class _Home extends State<Home> {
         children: [
           Text(count.toString()),
           OutlinedButton(
-              onPressed: () {FlutterBackgroundService().startService();},
+              onPressed: () {service.startService();},
               child: const Text("Start")),
           OutlinedButton(
-              onPressed: () {FlutterBackgroundService().invoke('stop');},
+              onPressed: () {service.invoke('stop');},
               child: const Text("Stop")),
           OutlinedButton(
-              onPressed: () {FlutterBackgroundService().invoke('setAppNames', {'appNames' : _selectedPackages.toList()});},
+              onPressed: () {service.invoke('setAppNames', {'appNames' : _selectedPackages.toList()});},
               child: const Text("Add chrome")),
           OutlinedButton(
-              onPressed: () {FlutterBackgroundService().invoke('timer');},
+              onPressed: () {service.invoke('timer');},
               child: const Text("Call Timer")),
           //_getInstalledAppsListView(context)
         ],
@@ -94,7 +94,7 @@ class _Home extends State<Home> {
 
 
   _showDialog() async {
-    FlutterBackgroundService().on("showDialog").listen((event) {
+    service.on("showDialog").listen((event) {
       print("received");
       if(_selectedPackages.contains("com.android.chrome")) {
         _selectedPackages.remove("com.android.chrome");
