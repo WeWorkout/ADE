@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'package:ade/alert_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:usage_stats/usage_stats.dart';
 
 @pragma('vm:entry-point')
@@ -29,6 +30,10 @@ onServiceStart(ServiceInstance service) {
     }
   });
 
+  service.on('timer').listen((event) {
+    print('timer callback');
+  });
+
   int count = 0;
   Timer.periodic(const Duration(seconds: 2), (timer) {
     print('periodic');
@@ -46,7 +51,9 @@ process(ServiceInstance service, Set<String> appPackageNames, Map<String, UsageI
       if(usageStats[appName]!.lastTimeUsed != previousUsageStats[appName]!.lastTimeUsed) {
         print("invoked");
         service.invoke('showDialog');
-        showOverlayWindow();
+        FlutterOverlayWindow.showOverlay();
+        //FlutterOverlayWindow.shareData(service);
+        //showOverlayWindow(service);
       }
       else {
         print("handle other conditions in internal");

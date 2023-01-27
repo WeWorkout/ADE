@@ -1,3 +1,4 @@
+import 'dart:developer';
 
 import 'package:ade/monitor_service.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,10 @@ onStart() async {
   IosConfiguration iosConfiguration = IosConfiguration();
 
   AndroidConfiguration androidConfiguration = AndroidConfiguration(
-      onStart: onServiceStart, autoStart: true, isForegroundMode: true);
+      onStart: onServiceStart,
+      autoStart: true,
+      isForegroundMode: true,
+      autoStartOnBoot: true);
 
   await service.configure(
       iosConfiguration: iosConfiguration,
@@ -18,5 +22,3 @@ onStart() async {
 
   service.startService();
 }
-
-

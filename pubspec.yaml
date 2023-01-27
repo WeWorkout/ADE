@@ -41,6 +41,8 @@ dependencies:
   flutter_background_service: ^2.4.6
   system_alert_window: ^1.2.1
   share_plus: ^6.3.0
+  flutter_overlay_window: ^0.3.3
+  flutter_foreground_task: ^3.10.0
 
 dev_dependencies:
   flutter_test:

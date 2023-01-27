@@ -54,6 +54,9 @@ class _Home extends State<Home> {
           OutlinedButton(
               onPressed: () {FlutterBackgroundService().invoke('setAppNames', {'appNames' : _selectedPackages.toList()});},
               child: const Text("Add chrome")),
+          OutlinedButton(
+              onPressed: () {FlutterBackgroundService().invoke('timer');},
+              child: const Text("Call Timer")),
           //_getInstalledAppsListView(context)
         ],
       ),

@@ -13,6 +13,8 @@
         android:label="ade"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+       <service android:name="flutter.overlay.window.flutter_overlay_window.OverlayService" android:exported="false" />
+       <service android:name="com.pravera.flutter_foreground_task.service.ForegroundService" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

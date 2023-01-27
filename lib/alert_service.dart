@@ -1,7 +1,10 @@
 
 
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:system_alert_window/system_alert_window.dart';
 import 'package:ade/timer_service.dart';
 
@@ -10,10 +13,12 @@ bool _isShowingWindow = false;
 bool _isUpdatedWindow = false;
 late String _platformVersion;
 SystemWindowPrefMode prefMode = SystemWindowPrefMode.OVERLAY;
+late ServiceInstance _service;
 
 @pragma('vm:entry-point')
-void callBack(String tag) {
+void callBack(String tag, ServiceInstance service) {
   WidgetsFlutterBinding.ensureInitialized();
+  DartPluginRegistrant.ensureInitialized();
   print(tag);
   switch (tag) {
     case "simple_button":
@@ -23,11 +28,17 @@ void callBack(String tag) {
       break;
     case "focus_button":
       print("Focus button has been called");
-      createTimerService();
+      callTimerService(service);
       break;
     default:
       print("OnClick event of $tag");
   }
+}
+
+void callTimerService(ServiceInstance serviceInstance) {
+  //createTimerService();
+  print('test timer');
+  serviceInstance.invoke('timer');
 }
 
 Future<void> _initPlatformState() async {
@@ -51,10 +62,15 @@ Future<void> _requestPermissions() async {
   await SystemAlertWindow.requestPermissions(prefMode: prefMode);
 }
 
-showOverlayWindow() async {
+_setService(ServiceInstance serviceInstance) {
+  _service = serviceInstance;
+}
+
+showOverlayWindow(ServiceInstance service) async {
+  _setService(service);
   _initPlatformState();
   _requestPermissions();
-  SystemAlertWindow.registerOnClickListener(callBack);
+  SystemAlertWindow.registerOnClickListener(callBack, service);
   if (!_isShowingWindow) {
     SystemWindowHeader header = SystemWindowHeader(
         title: SystemWindowText(
