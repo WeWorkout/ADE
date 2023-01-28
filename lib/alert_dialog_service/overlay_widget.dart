@@ -2,6 +2,7 @@ import 'package:ade/alert_dialog_service/alert_dialog_service.dart';
 import 'package:ade/alert_dialog_service/alert_dialog_status.dart';
 import 'package:ade/alert_dialog_service/alert_dialog_status.dart';
 import 'package:ade/alert_dialog_service/widgets/alert_dialog_header.dart';
+import 'package:ade/alert_dialog_service/widgets/alert_dialog_nav_buttons.dart';
 import 'package:ade/alert_dialog_service/widgets/alert_dialog_timer.dart';
 import 'package:ade/timer_service/timer_service.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,9 @@ class OverlayWidget extends StatefulWidget {
 
 class _OverlayWidget extends State<OverlayWidget> {
 
+  Map<String, double> timeData = {"time": 5};
+
+  double time = 5;
   String status = AlertDialogStatus.FIRST_TIME;
   late String appName;
 
@@ -24,21 +28,14 @@ class _OverlayWidget extends State<OverlayWidget> {
     return Center(
       child: Container(
         color: Colors.white,
-        height: screenHeight * 0.45,
+        height: screenHeight * 0.5,
         width: screenWidth * 0.7,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             AlertDialogHeader(status),
-            AlertDialogTimer(),
-            // _timerPresets(),
-            // _navButtons(),
-            OutlinedButton(
-              onPressed: () async {
-                createTimerServiceForApp(DateTime.now().add(const Duration(seconds: 10)), appName);
-                AlertDialogService.closeAlertDialog();
-              },
-              child: Text("$status!"),
-            ),
+            AlertDialogTimer(timeData),
+            AlertDialogNavButtons(timeData, appName)
           ],
         ),
       ),

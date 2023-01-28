@@ -85,13 +85,15 @@ Future<bool> storeForegroundSessionData(String appName, DateTime finishTime) asy
   return true;
 }
 
-killOngoingServiceIfAny() async{
+killOngoingServiceIfAny() async {
   if (await FlutterForegroundTask.isRunningService) {
     bool isDataCleared = await FlutterForegroundTask.clearAllData();
     bool isServiceStopped = await FlutterForegroundTask.stopService();
 
     if(!(isDataCleared && isServiceStopped)){
       debugPrint("Issue in killing service: $isDataCleared  $isServiceStopped");
+    } else {
+      debugPrint("Timer Service killed successfully!");
     }
   }
 }
