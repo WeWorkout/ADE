@@ -3,7 +3,7 @@ import 'package:ade/alert_dialog_service/overlay_widget.dart';
 import 'package:ade/startup.dart';
 import 'package:flutter/material.dart';
 
-import 'home.dart';
+import 'mainAppUi/home.dart';
 
 void main() async {
   // Startup the app
