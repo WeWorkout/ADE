@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:isolate';
 
+import 'package:ade/alert_dialog_service/alert_dialog_service.dart';
 import 'package:ade/timer_service/utils/foreground_service_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
@@ -57,8 +58,6 @@ class TimerTaskHandler extends TaskHandler {
 
 _finalizeTimerService(String appName) async{
   debugPrint("Timer for ${appName} is complete!");
-
-  //ToDo: Re-trigger Alert Window to extend
-
+  AlertDialogService.createAlertDialog(appName, true);
   await killOngoingServiceIfAny();
 }

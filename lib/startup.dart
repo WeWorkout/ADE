@@ -1,24 +1,25 @@
-import 'dart:developer';
+import 'dart:ui';
 
-import 'package:ade/monitor_service.dart';
+import 'package:ade/monitoring_service/utils/flutter_background_service_utils.dart';
+import 'package:ade/timer_service/utils/foreground_service_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:usage_stats/usage_stats.dart';
 
 onStart() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final service = FlutterBackgroundService();
+  DartPluginRegistrant.ensureInitialized();
 
-  IosConfiguration iosConfiguration = IosConfiguration();
+  await _getAllPermissions();
 
-  AndroidConfiguration androidConfiguration = AndroidConfiguration(
-      onStart: onServiceStart,
-      autoStart: true,
-      isForegroundMode: true,
-      autoStartOnBoot: true);
+  await startMonitoringService();
+}
 
-  await service.configure(
-      iosConfiguration: iosConfiguration,
-      androidConfiguration: androidConfiguration);
-
-  service.startService();
+_getAllPermissions() async{
+  // Get all permissions
+  // Maintain order to avoid fuck up of usage stats permission
+  bool overlayPermissionsGranted = await checkForOverlayPermissions();
+  if(!overlayPermissionsGranted){
+    debugPrint("Overlay Permissions not granted!");
+  }
+  UsageStats.grantUsagePermission();
 }
