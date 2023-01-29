@@ -1,7 +1,7 @@
 import 'dart:async';
 
-
 import 'package:ade/alert_dialog_service/alert_dialog_service.dart';
+import 'package:ade/main_app_ui/dtos/application_data.dart';
 import 'package:ade/monitoring_service/utils/user_usage_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -9,7 +9,7 @@ import 'package:usage_stats/usage_stats.dart';
 
 
 const String STOP_MONITORING_SERVICE_KEY = "stop";
-const String SET_APP_NAME_FOR_MONITORING_KEY = "setAppNames";
+const String SET_APPS_NAME_FOR_MONITORING_KEY = "setAppsNames";
 const String APP_NAMES_LIST_KEY = "appNames";
 
 // Entry Point for Monitoring Isolate
@@ -19,16 +19,17 @@ onMonitoringServiceStart(ServiceInstance service) async{
   // DartPluginRegistrant.ensureInitialized();
   // UsageStats.grantUsagePermission();
 
-  Set<String> appNames = {};
-  Set<String> appsOpenedStateSet = {};
+  // Using AppIds as reference here
+  Set<String> monitoredApplicationSet = {};
+  Set<String> openedApplicationsSet = {};
 
-  _registerAllListeners(service, appNames);
+  _registerAllListeners(service, monitoredApplicationSet);
 
   // Monitor all Apps periodically to trigger alert window service
   Map<String, UsageInfo> previousUsageSession = await getCurrentUsageStats();
   Timer.periodic(const Duration(seconds: 2), (timer) async{
     Map<String, UsageInfo> currentUsageSession = await getCurrentUsageStats();
-    String? appOpened = checkIfAnyAppHasBeenOpened(currentUsageSession, previousUsageSession, appNames, appsOpenedStateSet);
+    String? appOpened = checkIfAnyAppHasBeenOpened(currentUsageSession, previousUsageSession, monitoredApplicationSet, openedApplicationsSet);
     if(appOpened != null){
       // Open Alert Window overlay
       AlertDialogService.createAlertDialog(appOpened, false);
@@ -45,15 +46,16 @@ _registerAllListeners(ServiceInstance service, Set<String> appNames){
   });
 
   // Register a listener to add Apps that need to be monitored
-  service.on(SET_APP_NAME_FOR_MONITORING_KEY).listen((event) {
+  service.on(SET_APPS_NAME_FOR_MONITORING_KEY).listen((event) {
     if(event!=null && event.isNotEmpty) {
-      List appNamesList = event[APP_NAMES_LIST_KEY] as List;
-      for(dynamic appName in appNamesList){
-        appNames.add(appName as String);
+      List appDataList = event[APP_NAMES_LIST_KEY] as List;
+      for(dynamic appDataObject in appDataList){
+        ApplicationData appData = appDataObject as ApplicationData;
+        appNames.add(appData.appId);
       }
     }
     else {
-      debugPrint('App Names list was empty');
+      debugPrint('Applications list was empty');
     }
   });
 }

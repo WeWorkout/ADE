@@ -1,11 +1,8 @@
-
-import 'package:ade/mainAppUi/utils/user_apps_utils.dart';
+import 'package:ade/main_app_ui/dtos/application_data.dart';
+import 'package:ade/main_app_ui/utils/user_apps_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:installed_apps/app_info.dart';
-import 'package:installed_apps/installed_apps.dart';
-import 'package:usage_stats/usage_stats.dart';
 
 class Home extends StatefulWidget {
 
@@ -14,22 +11,12 @@ class Home extends StatefulWidget {
 }
 
 class _Home extends State<Home> {
-
-  late Map<String, UsageInfo> _usageStats;
-  final Set<String> _selectedPackages = {'com.android.chrome'};
+  final Set<ApplicationData> _selectedPackages = {};
   int count = 0;
   final service = FlutterBackgroundService();
 
   @override
   void initState() {
-    service.on("showDialog").listen((event) {
-      print("received");
-      if(_selectedPackages.contains("com.android.chrome")) {
-        _selectedPackages.remove("com.android.chrome");
-      } else {
-        _selectedPackages.add("com.android.chrome");
-      }
-    });
     super.initState();
   }
 
@@ -53,7 +40,7 @@ class _Home extends State<Home> {
           SizedBox(height: screenHeight*0.03,),
           _addAppsButton(context),
           SizedBox(height: screenHeight*0.03,),
-          _listOfMonitoringApps(context, ["Chrome", "Youtube"])
+          _listOfMonitoringApps(context, _selectedPackages)
         ],
       )
     );
@@ -79,7 +66,7 @@ class _Home extends State<Home> {
     );
   }
 
-  Widget _listOfMonitoringApps(BuildContext context, List<String> applicationsList){
+  Widget _listOfMonitoringApps(BuildContext context, Set<ApplicationData> applicationsSet){
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
@@ -94,17 +81,17 @@ class _Home extends State<Home> {
             border: Border.all(color: Colors.black)
           ),
           padding: EdgeInsets.all(screenWidth*0.05),
-          child: applicationsList.isNotEmpty
+          child: applicationsSet.isNotEmpty
               ? ListView.separated(
               separatorBuilder: (BuildContext context, int index){
                 return SizedBox(height: screenHeight*0.02,);
               },
-              itemCount: applicationsList.length,
+              itemCount: applicationsSet.length,
               itemBuilder: (BuildContext context, int index){
-                  String applicationName = applicationsList[index];
+                  ApplicationData appInfo = applicationsSet.elementAt(index);
                   return ListTile(
                     leading: Icon(Icons.arrow_forward_ios, size: screenWidth*0.05,),
-                    title: Text(applicationName, style: const TextStyle(fontStyle: FontStyle.italic),),
+                    title: Text(appInfo.appName, style: const TextStyle(fontStyle: FontStyle.italic),),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                       side: const BorderSide(color: Colors.black, width: 1),

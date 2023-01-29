@@ -1,8 +1,9 @@
+import 'package:ade/main_app_ui/dtos/application_data.dart';
 import 'package:flutter/material.dart';
 import 'package:installed_apps/app_info.dart';
 import 'package:installed_apps/installed_apps.dart';
 
-showInstalledAppsListViewDialog(BuildContext context, Set<String> selectedPackages) {
+showInstalledAppsListViewDialog(BuildContext context, Set<ApplicationData> selectedPackages) {
   final double screenHeight = MediaQuery.of(context).size.height;
   final double screenWidth = MediaQuery.of(context).size.width;
 

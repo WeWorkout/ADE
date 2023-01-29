@@ -13,25 +13,25 @@ Future<Map<String, UsageInfo>> getCurrentUsageStats() async{
 String? checkIfAnyAppHasBeenOpened(
     Map<String, UsageInfo> currentUsage,
     Map<String, UsageInfo> previousUsage,
-    Set<String> appNamesSet,
-    Set<String> appsOpenedStateSet){
+    Set<String> monitoredApplicationSet,
+    Set<String> openedApplicationsSet){
 
-  for(String appName in appNamesSet) {
-    if(currentUsage.containsKey(appName) && previousUsage.containsKey(appName)) {
-      UsageInfo currentAppUsage = currentUsage[appName]!;
-      UsageInfo previousAppUsage = previousUsage[appName]!;
+  for(String appId in monitoredApplicationSet) {
+    if(currentUsage.containsKey(appId) && previousUsage.containsKey(appId)) {
+      UsageInfo currentAppUsage = currentUsage[appId]!;
+      UsageInfo previousAppUsage = previousUsage[appId]!;
 
       if(currentAppUsage.lastTimeUsed != previousAppUsage.lastTimeUsed) {
         debugPrint("App last time used changed from ${previousAppUsage.lastTimeUsed} to ${currentAppUsage.lastTimeUsed}");
         // Case of user using the app and then closing it
-        if(appsOpenedStateSet.contains(appName)){
-          appsOpenedStateSet.remove(appName);
+        if(openedApplicationsSet.contains(appId)){
+          openedApplicationsSet.remove(appId);
           return null;
         }
         // User opened the app
         else{
-          appsOpenedStateSet.add(appName);
-          return appName;
+          openedApplicationsSet.add(appId);
+          return appId;
         }
       }
     }
