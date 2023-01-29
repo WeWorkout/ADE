@@ -42,6 +42,7 @@ dependencies:
   share_plus: ^6.3.0
   flutter_overlay_window: ^0.3.3
   flutter_foreground_task: ^3.10.0
+  sleek_circular_slider: ^2.0.1
 
 dev_dependencies:
   flutter_test:
