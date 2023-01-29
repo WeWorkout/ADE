@@ -1,3 +1,4 @@
+import 'package:ade/main_app_ui/dtos/application_data.dart';
 import 'package:flutter/material.dart';
 import 'package:usage_stats/usage_stats.dart';
 
@@ -13,10 +14,10 @@ Future<Map<String, UsageInfo>> getCurrentUsageStats() async{
 String? checkIfAnyAppHasBeenOpened(
     Map<String, UsageInfo> currentUsage,
     Map<String, UsageInfo> previousUsage,
-    Set<String> monitoredApplicationSet,
+    Map<String, ApplicationData> monitoredApplicationSet,
     Set<String> openedApplicationsSet){
 
-  for(String appId in monitoredApplicationSet) {
+  for(String appId in monitoredApplicationSet.keys) {
     if(currentUsage.containsKey(appId) && previousUsage.containsKey(appId)) {
       UsageInfo currentAppUsage = currentUsage[appId]!;
       UsageInfo previousAppUsage = previousUsage[appId]!;

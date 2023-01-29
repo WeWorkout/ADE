@@ -1,10 +1,8 @@
 import 'package:ade/alert_dialog_service/alert_dialog_service.dart';
 import 'package:ade/alert_dialog_service/alert_dialog_status.dart';
-import 'package:ade/alert_dialog_service/alert_dialog_status.dart';
 import 'package:ade/alert_dialog_service/widgets/alert_dialog_header.dart';
 import 'package:ade/alert_dialog_service/widgets/alert_dialog_nav_buttons.dart';
 import 'package:ade/alert_dialog_service/widgets/alert_dialog_timer.dart';
-import 'package:ade/timer_service/timer_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 
@@ -15,11 +13,12 @@ class OverlayWidget extends StatefulWidget {
 
 class _OverlayWidget extends State<OverlayWidget> {
 
-  Map<String, double> timeData = {"time": 5};
+  Map<String, double> timeData = {"time": 0.5};
 
-  double time = 5;
+  double time = 0.5;
   String status = AlertDialogStatus.FIRST_TIME;
-  late String appName;
+  String appName = "ADE";
+  String appId = "com.ade.ade";
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +34,7 @@ class _OverlayWidget extends State<OverlayWidget> {
           children: [
             AlertDialogHeader(status),
             AlertDialogTimer(timeData),
-            AlertDialogNavButtons(timeData, appName)
+            AlertDialogNavButtons(timeData, appName, appId)
           ],
         ),
       ),
@@ -49,7 +48,13 @@ class _OverlayWidget extends State<OverlayWidget> {
       if(event == AlertDialogStatus.FIRST_TIME || event == AlertDialogStatus.EXTENTION || event == AlertDialogStatus.OVERRIDE) {
         status = event;
       } else {
-        appName = event;
+        String eventString = event as String;
+        if(eventString.contains("AppName")) {
+          appName = eventString.replaceFirst("AppName-", "");
+        } else {
+          appId = eventString;
+        }
+
       }
       setState(() {});
     });

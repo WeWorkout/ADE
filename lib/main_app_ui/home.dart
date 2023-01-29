@@ -1,8 +1,11 @@
-import 'package:ade/main_app_ui/dtos/application_data.dart';
+import 'dart:async';
+
+import 'package:ade/dtos/application_data.dart';
 import 'package:ade/main_app_ui/utils/user_apps_utils.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:ade/monitoring_service/monitoring_service.dart';
+import 'package:hive/hive.dart';
 
 class Home extends StatefulWidget {
 
