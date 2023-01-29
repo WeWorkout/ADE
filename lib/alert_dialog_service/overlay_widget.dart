@@ -19,7 +19,7 @@ class _OverlayWidget extends State<OverlayWidget> {
 
   double time = 5;
   String status = AlertDialogStatus.FIRST_TIME;
-  late String appName;
+  String appName = "ADE";
 
   @override
   Widget build(BuildContext context) {
