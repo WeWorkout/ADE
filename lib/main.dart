@@ -1,17 +1,12 @@
 
 import 'package:ade/alert_dialog_service/overlay_widget.dart';
+import 'package:ade/main_app_ui/permissions_screen.dart';
 import 'package:ade/startup.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
+import 'package:usage_stats/usage_stats.dart';
 
 import 'main_app_ui/home.dart';
-
-void main() async {
-  // Startup the app
-  await onStart();
-
-  runApp(const MyApp());
-}
-
 
 // This is the isolate entry for the Alert Window Service
 // It needs to be added in the main.dart file with the name "overlayMain"...(jugaadu code max by plugin dev)
@@ -27,9 +22,17 @@ void overlayMain() {
   ));
 }
 
+void main() async {
+  // Startup the app
+  await onStart();
+  bool permissionsAvailable = (await UsageStats.checkUsagePermission())! && await FlutterForegroundTask.canDrawOverlays;
+  runApp(MyApp(permissionsAvailable ? Home() : PermissionsScreen()));
+}
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  Widget screenToDisplay;
+
+  MyApp(this.screenToDisplay);
 
   // This widget is the root of your application.
   @override
@@ -38,7 +41,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
-      home: Home(),
+      home: screenToDisplay,
     );
   }
 }
