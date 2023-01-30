@@ -11,20 +11,9 @@ onStart() async {
   WidgetsFlutterBinding.ensureInitialized();
   DartPluginRegistrant.ensureInitialized();
 
-  await _getAllPermissions();
-
   await startMonitoringService();
 
   // final location = await path.getApplicationDocumentsDirectory();
   // Hive.init(location.path);
 }
 
-_getAllPermissions() async{
-  // Get all permissions
-  // Maintain order to avoid fuck up of usage stats permission
-  bool overlayPermissionsGranted = await checkForOverlayPermissions();
-  if(!overlayPermissionsGranted){
-    debugPrint("Overlay Permissions not granted!");
-  }
-  UsageStats.grantUsagePermission();
-}

@@ -2,16 +2,11 @@
 import 'package:ade/alert_dialog_service/overlay_widget.dart';
 import 'package:ade/database/database_service.dart';
 import 'package:ade/main_app_ui/home.dart';
+import 'package:ade/main_app_ui/permissions_screen.dart';
 import 'package:ade/startup.dart';
 import 'package:flutter/material.dart';
-
-
-void main() async {
-  // Startup the app
-  await onStart();
-  DatabaseService dbService = await DatabaseService.instance();
-  runApp(MyApp(dbService));
-}
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
+import 'package:usage_stats/usage_stats.dart';
 
 
 // This is the isolate entry for the Alert Window Service
@@ -28,11 +23,21 @@ void overlayMain() {
   ));
 }
 
+void main() async {
+  // Startup the app
+  await onStart();
+  DatabaseService dbService = await DatabaseService.instance();
+  bool permissionsAvailable = (await UsageStats.checkUsagePermission())! && await FlutterForegroundTask.canDrawOverlays;
+  runApp(MyApp(permissionsAvailable ? Home(dbService) : PermissionsScreen(dbService), dbService));
+}
 
 class MyApp extends StatelessWidget {
+  Widget screenToDisplay;
 
   DatabaseService dbService;
-  MyApp(this.dbService);
+  MyApp(this.screenToDisplay, this.dbService);
+
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -40,7 +45,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
-      home: Home(dbService),
+      home: screenToDisplay,
     );
   }
 }
