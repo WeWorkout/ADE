@@ -1,4 +1,5 @@
-import 'package:ade/main_app_ui/dtos/application_data.dart';
+
+import 'package:ade/dtos/application_data.dart';
 import 'package:flutter/material.dart';
 import 'package:usage_stats/usage_stats.dart';
 
