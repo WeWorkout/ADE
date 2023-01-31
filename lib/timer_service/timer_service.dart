@@ -5,7 +5,7 @@ import 'dart:ui';
 import 'package:ade/timer_service/utils/foreground_service_utils.dart';
 import 'package:flutter/material.dart';
 
-createTimerServiceForApp(DateTime finishTime, String appName) async {
+createTimerServiceForApp(DateTime finishTime, String appName, String appId) async {
   debugPrint("Timer Service started!");
   // Creates a foreground service with a notification
   initNotificationForegroundTask(finishTime, appName);
@@ -14,7 +14,7 @@ createTimerServiceForApp(DateTime finishTime, String appName) async {
   final receivePort = await getForegroundServiceReceivePort();
 
   // Start the foreground Service
-  _startForegroundTask(receivePort, appName, finishTime);
+  _startForegroundTask(receivePort, appName, appId, finishTime);
 }
 
 // Isolate Code
@@ -29,14 +29,14 @@ void startCallback() async{
 
 }
 
-Future<bool> _startForegroundTask(ReceivePort? receivePort, String appName, DateTime finishTime) async {
+Future<bool> _startForegroundTask(ReceivePort? receivePort, String appName, String appId, DateTime finishTime) async {
   // Ask for permissions for overlay if not yet granted!
   bool isOverlayPermissionGranted = await checkForOverlayPermissions();
   if(!isOverlayPermissionGranted){
     return false;
   }
 
-  bool sessionDataStored = await storeForegroundSessionData(appName, finishTime);
+  bool sessionDataStored = await storeForegroundSessionData(appName, appId, finishTime);
   if(!sessionDataStored){
     return false;
   }

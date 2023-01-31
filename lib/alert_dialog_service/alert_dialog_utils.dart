@@ -1,25 +1,27 @@
 
 import 'package:ade/alert_dialog_service/alert_dialog_status.dart';
+import 'package:ade/dtos/application_data.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 
 class AlertDialogUtils {
 
-  static showFirstTimeDialog(String appName) async {
+  static showFirstTimeDialog(ApplicationData app) async {
     await FlutterOverlayWindow.showOverlay();
     await FlutterOverlayWindow.shareData(AlertDialogStatus.FIRST_TIME);
-    await FlutterOverlayWindow.shareData(appName);
+    await FlutterOverlayWindow.shareData(app.appId);
+    await FlutterOverlayWindow.shareData("AppName-${app.appName}");
   }
 
-  static showExtensionDialog(String appName) async {
+  static showExtensionDialog() async {
     await FlutterOverlayWindow.showOverlay();
     await FlutterOverlayWindow.shareData(AlertDialogStatus.EXTENTION);
-    await FlutterOverlayWindow.shareData(appName);
   }
 
-  static showOverrideDialog(String appName) async {
+  static showOverrideDialog(ApplicationData app) async {
     await FlutterOverlayWindow.showOverlay();
     await FlutterOverlayWindow.shareData(AlertDialogStatus.OVERRIDE);
-    await FlutterOverlayWindow.shareData(appName);
+    await FlutterOverlayWindow.shareData("AppName-${app.appName}");
+    await FlutterOverlayWindow.shareData(app.appId);
   }
 
   static closeAlertDialog() async {

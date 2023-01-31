@@ -3,15 +3,15 @@ import 'dart:ui';
 
 import 'package:ade/alert_dialog_service/alert_dialog_service.dart';
 import 'package:ade/timer_service/timer_service.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AlertDialogNavButtons extends StatelessWidget {
 
   Map<String, double> timeData;
   String appName;
+  String appId;
 
-  AlertDialogNavButtons(this.timeData, this.appName);
+  AlertDialogNavButtons(this.timeData, this.appName, this.appId);
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class AlertDialogNavButtons extends StatelessWidget {
 
   Widget _startButton(BuildContext context) {
     void onPressed() {
-      createTimerServiceForApp(DateTime.now().add(Duration(minutes: timeData["time"]!.toInt())), appName);
+      createTimerServiceForApp(DateTime.now().add(Duration(minutes: timeData["time"]!.toInt())), appName, appId);
       AlertDialogService.closeAlertDialog();
     }
     return _customOutlinedButton(

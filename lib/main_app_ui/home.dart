@@ -1,5 +1,6 @@
-import 'package:ade/main_app_ui/dtos/application_data.dart';
-import 'package:flutter/cupertino.dart';
+
+import 'package:ade/database/database_service.dart';
+import 'package:ade/dtos/application_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:installed_apps/app_info.dart';
@@ -7,13 +8,14 @@ import 'package:installed_apps/installed_apps.dart';
 
 class Home extends StatefulWidget {
 
+  DatabaseService dbService;
+  Home(this.dbService);
+
   @override
   State<Home> createState() => _Home();
 }
 
 class _Home extends State<Home> {
-  final Map<String, ApplicationData> _selectedPackagesMap = {};
-  int count = 0;
   final service = FlutterBackgroundService();
 
   @override
@@ -37,13 +39,13 @@ class _Home extends State<Home> {
           SizedBox(width: screenWidth*0.04,)],
       ),
       body: Column(
-        children: [
-          SizedBox(height: screenHeight*0.03,),
-          _addAppsButton(context),
-          SizedBox(height: screenHeight*0.03,),
-          _listOfMonitoringApps(context, _selectedPackagesMap)
-        ],
-      )
+              children: [
+                SizedBox(height: screenHeight*0.03,),
+                _addAppsButton(context),
+                SizedBox(height: screenHeight*0.03,),
+                _listOfMonitoringApps(context)
+              ],
+            )
     );
   }
 
@@ -54,7 +56,7 @@ class _Home extends State<Home> {
     return Center(
       child: InkWell(
         onTap: (){
-          showInstalledAppsListViewDialog(context, _selectedPackagesMap);
+          showInstalledAppsListViewDialog(context);
         },
         child: Column(
           children: [
@@ -67,7 +69,7 @@ class _Home extends State<Home> {
     );
   }
 
-  Widget _listOfMonitoringApps(BuildContext context, Map<String, ApplicationData> applicationsMap){
+  Widget _listOfMonitoringApps(BuildContext context){
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
@@ -82,14 +84,14 @@ class _Home extends State<Home> {
             border: Border.all(color: Colors.black)
           ),
           padding: EdgeInsets.all(screenWidth*0.05),
-          child: applicationsMap.isNotEmpty
+          child: widget.dbService.getAllAppData().isNotEmpty
               ? ListView.separated(
               separatorBuilder: (BuildContext context, int index){
                 return SizedBox(height: screenHeight*0.02,);
               },
-              itemCount: applicationsMap.length,
+              itemCount: widget.dbService.getAllAppData().length,
               itemBuilder: (BuildContext context, int index){
-                  ApplicationData appInfo = applicationsMap.values.elementAt(index);
+                  ApplicationData appInfo = widget.dbService.getAllAppData().elementAt(index);
                   return ListTile(
                     leading: Icon(Icons.arrow_forward_ios, size: screenWidth*0.05,),
                     title: Text(appInfo.appName, style: const TextStyle(fontStyle: FontStyle.italic),),
@@ -99,10 +101,9 @@ class _Home extends State<Home> {
                     ),
                     tileColor: Colors.pinkAccent.withOpacity(0.3),
                     trailing: InkWell(
-                        onTap: (){
-                          setState(() {
-                            _selectedPackagesMap.remove(appInfo.appId);
-                          });
+                        onTap: () async {
+                          await widget.dbService.removeAppData(appInfo.appId);
+                          setState(() {});
                         },
                         child: Icon(Icons.delete, color: Colors.red, size: screenWidth*0.07,)
                     ),
@@ -122,9 +123,11 @@ class _Home extends State<Home> {
     );
   }
 
-  showInstalledAppsListViewDialog(BuildContext context, Map<String, ApplicationData> selectedPackagesMap) {
+  showInstalledAppsListViewDialog(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
+
+    Map<dynamic, ApplicationData> selectedApps = widget.dbService.getBoxAsMap();
 
     return showDialog(
         barrierDismissible: true,
@@ -152,7 +155,7 @@ class _Home extends State<Home> {
                         }
 
                         List<AppInfo> apps = appsList.data!;
-                        return _listOfInstalledApps(context, apps, selectedPackagesMap, setStateDialog);
+                        return _listOfInstalledApps(context, apps, selectedApps, setStateDialog);
                       }
                   ),
                 ),
@@ -163,7 +166,7 @@ class _Home extends State<Home> {
     );
   }
 
-  Widget _listOfInstalledApps(BuildContext context, List<AppInfo> apps, Map<String, ApplicationData> selectedPackagesMap, Function(void Function()) setStateDialog){
+  Widget _listOfInstalledApps(BuildContext context, List<AppInfo> apps, Map<dynamic, ApplicationData> selectedApps, Function(void Function()) setStateDialog){
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
@@ -192,21 +195,19 @@ class _Home extends State<Home> {
                             borderRadius: BorderRadius.circular(10),
                             side: const BorderSide(color: Colors.black, width: 1),
                           ),
-                          selected: selectedPackagesMap.containsKey(appInfo.packageName),
-                          onTap: selectedPackagesMap.containsKey(appInfo.packageName)
+                          selected: selectedApps.containsKey(appInfo.packageName),
+                          onTap: selectedApps.containsKey(appInfo.packageName)
                               ? (){
                             // SetState for dialog and the parent
                             setStateDialog((){
-                              selectedPackagesMap.remove(appInfo.packageName!);
+                              selectedApps.remove(appInfo.packageName!);
                             });
-                            setState(() {});
                           }
                               :() {
                             // SetState for dialog and the parent
                             setStateDialog((){
-                              selectedPackagesMap.putIfAbsent(appInfo.packageName!, () => ApplicationData(appInfo.name!, appInfo.packageName!, appInfo.icon));
+                              selectedApps.putIfAbsent(appInfo.packageName!, () => ApplicationData(appInfo.name!, appInfo.packageName!, appInfo.icon));
                             });
-                            setState(() {});
                           },
                           leading: Image.memory(apps[index].icon!),
                           title: Text(apps[index].name!),
@@ -219,11 +220,13 @@ class _Home extends State<Home> {
         ),
         SizedBox(height: screenHeight*0.02,),
         MaterialButton(
-          onPressed: (){
+          onPressed: () async {
+            await widget.dbService.addAllAppData(selectedApps.values.toList());
+            setState(() {});
             Navigator.of(context).pop();
           },
           color: Colors.greenAccent,
-          child: Text("Done"),
+          child: const Text("Done"),
         )
       ],
     );
@@ -248,28 +251,4 @@ class _Home extends State<Home> {
     );
   }
 
-  Widget _body() {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(count.toString()),
-          OutlinedButton(
-              onPressed: () {service.startService();},
-              child: const Text("Start")),
-          OutlinedButton(
-              onPressed: () {service.invoke('stop');},
-              child: const Text("Stop")),
-          OutlinedButton(
-              onPressed: () {service.invoke('setAppNames', {'appNames' : _selectedPackagesMap.keys.toList()});},
-              child: const Text("Add chrome")),
-          OutlinedButton(
-              onPressed: () {service.invoke('timer');},
-              child: const Text("Call Timer")),
-          //_getInstalledAppsListView(context)
-        ],
-      ),
-    );
-  }
 }

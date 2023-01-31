@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ade/database/database_service.dart';
 import 'package:ade/main_app_ui/home.dart';
 import 'package:ade/timer_service/utils/foreground_service_utils.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,6 +10,10 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:usage_stats/usage_stats.dart';
 
 class PermissionsScreen extends StatefulWidget{
+
+  DatabaseService dbService;
+  PermissionsScreen(this.dbService);
+
   @override
   State<StatefulWidget> createState() {
     return _PermissionsScreenState();
@@ -149,7 +154,7 @@ class _PermissionsScreenState extends State<PermissionsScreen>{
       return MaterialButton(
           padding: const EdgeInsets.all(10),
           onPressed: (drawOverOtherAppsPermissionGranted && usagePermissionGranted)
-              ? () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => Home()))
+              ? () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => Home(widget.dbService)))
               : null,
           color: Colors.white,
           disabledColor: Colors.grey,

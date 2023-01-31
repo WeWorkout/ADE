@@ -9,8 +9,9 @@ import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 class TimerTaskHandler extends TaskHandler {
   final DateTime finishTime;
   final String appName;
+  final String appId;
 
-  TimerTaskHandler(this.appName, this.finishTime);
+  TimerTaskHandler(this.appName, this.appId, this.finishTime);
 
   @override
   Future<void> onStart(DateTime timestamp, SendPort? sendPort) async {
@@ -58,6 +59,6 @@ class TimerTaskHandler extends TaskHandler {
 
 _finalizeTimerService(String appName) async{
   debugPrint("Timer for ${appName} is complete!");
-  AlertDialogService.createAlertDialog(appName, true);
+  AlertDialogService.createTimerExtensionAlertDialog();
   await killOngoingServiceIfAny();
 }
