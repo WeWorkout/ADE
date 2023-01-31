@@ -2,7 +2,6 @@
 import 'package:ade/dtos/application_data.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:path_provider/path_provider.dart' as path;
 
 class DatabaseService {
 
@@ -12,7 +11,7 @@ class DatabaseService {
 
 
   final String _boxName = "application-data";
-  late final Box<ApplicationData> _box;
+  late Box<ApplicationData> _box;
 
   static Future<DatabaseService> instance() async {
     DatabaseService dbService = DatabaseService();
@@ -35,8 +34,8 @@ class DatabaseService {
 
   openBox() async {
     if(Hive.isBoxOpen(_boxName)) {
-      await _box.close();
-      _box = Hive.box(_boxName);
+      await close();
+      _box = await Hive.openBox(_boxName);
     } else {
       _box = await Hive.openBox(_boxName);
     }
@@ -44,7 +43,7 @@ class DatabaseService {
 
   close() async {
     if(Hive.isBoxOpen(_boxName)) {
-      _box.close();
+      await _box.close();
       _finalizer.detach(this);
     } else {
       debugPrint("Box not open!");
