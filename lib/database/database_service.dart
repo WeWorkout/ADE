@@ -34,15 +34,17 @@ class DatabaseService {
 
   openBox() async {
     if(Hive.isBoxOpen(_boxName)) {
+      debugPrint("Reopening the box so closing it first!");
       await close();
-      _box = await Hive.openBox(_boxName);
-    } else {
-      _box = await Hive.openBox(_boxName);
     }
+
+    debugPrint("Opening the box!");
+    _box = await Hive.openBox(_boxName);
   }
 
   close() async {
     if(Hive.isBoxOpen(_boxName)) {
+      debugPrint("Closing the box!");
       await _box.close();
       _finalizer.detach(this);
     } else {
@@ -59,14 +61,13 @@ class DatabaseService {
   }
 
   addAppData(ApplicationData appData) async {
-    debugPrint("Adding ${appData.appId}");
+    debugPrint("Adding ${appData.appId} to box!");
     await _box.put(appData.appId, appData);
   }
 
   addAllAppData(List<ApplicationData> appDatas) async {
     for(ApplicationData appData in appDatas) {
-      debugPrint("Adding ${appData.appId}");
-      await _box.put(appData.appId, appData);
+      await addAppData(appData);
     }
   }
 
@@ -75,7 +76,7 @@ class DatabaseService {
   }
 
   removeAppData(String appId) async {
-    debugPrint("Removing $appId");
+    debugPrint("Removing $appId from box!");
     await _box.delete(appId);
   }
 }

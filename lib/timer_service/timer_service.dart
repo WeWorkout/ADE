@@ -20,6 +20,7 @@ createTimerServiceForApp(DateTime finishTime, String appName, String appId) asyn
 // Isolate Code
 @pragma('vm:entry-point')
 void startCallback() async{
+  debugPrint("Starting Timer Service Isolate!");
   WidgetsFlutterBinding.ensureInitialized();
   DartPluginRegistrant.ensureInitialized();
 

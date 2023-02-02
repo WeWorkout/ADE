@@ -4,14 +4,23 @@ import 'package:ade/timer_service/utils/foreground_service_utils.dart';
 import 'package:flutter/material.dart';
 
 class AlertDialogService {
+
+  // The isolate function for this service has been defined in the main class file!
+
   static createAlertDialog(ApplicationData app) async {
+    // Check if an app is already being timed
     String? currentAppId = await getCurrentRunningAppId();
+
     if (currentAppId == null) {
+      debugPrint("Displaying the Alert Dialog for $currentAppId");
       await AlertDialogUtils.showFirstTimeDialog(app);
-    } else if (currentAppId == app.appId) {
+    }
+    else if (currentAppId == app.appId) {
       // DO NOTHING
       debugPrint("Overlay will not open for same app again.");
-    } else {
+    }
+    else {
+      debugPrint("Displaying Override Alert Dialog for ${app.appId} because of $currentAppId");
       await AlertDialogUtils.showOverrideDialog(app);
     }
   }

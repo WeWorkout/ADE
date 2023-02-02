@@ -1,4 +1,3 @@
-
 import 'package:ade/alert_dialog_service/overlay_widget.dart';
 import 'package:ade/database/database_service.dart';
 import 'package:ade/main_app_ui/home.dart';
@@ -13,6 +12,7 @@ import 'package:usage_stats/usage_stats.dart';
 // It needs to be added in the main.dart file with the name "overlayMain"...(jugaadu code max by plugin dev)
 @pragma("vm:entry-point")
 void overlayMain() async {
+  debugPrint("Starting Alerting Window Isolate!");
   WidgetsFlutterBinding.ensureInitialized();
   DatabaseService dbService = await DatabaseService.instance();
   runApp(MaterialApp(
@@ -25,7 +25,8 @@ void overlayMain() async {
 }
 
 void main() async {
-  // Startup the app
+  debugPrint("Starting main Isolate!");
+  // Start the monitoring service
   await onStart();
   DatabaseService dbService = await DatabaseService.instance();
   bool permissionsAvailable = (await UsageStats.checkUsagePermission())! && await FlutterForegroundTask.canDrawOverlays;

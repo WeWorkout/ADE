@@ -1,6 +1,6 @@
-
 import 'package:ade/database/database_service.dart';
 import 'package:ade/dtos/application_data.dart';
+import 'package:ade/main_app_ui/about_page.dart';
 import 'package:ade/main_app_ui/widgets/loading_dialog.dart';
 import 'package:ade/main_app_ui/widgets/yes_no_dialog.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +20,10 @@ class Home extends StatefulWidget {
 }
 
 class _Home extends State<Home> {
+  // Fetching an instance of the monitoring service
   final service = FlutterBackgroundService();
+
+  // Status 0:In Progress, 1:Complete Successfully, 2:Failed
   Set<int> status = {0};
 
   @override
@@ -28,34 +31,85 @@ class _Home extends State<Home> {
     super.initState();
   }
 
-  restartMonitoringService() async {
+  @override
+  Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
+
+    return Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: Colors.greenAccent,
+          elevation: 0,
+          title: const Text("ADE App", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 25)),
+          actions: [
+            InkWell(
+                onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => AboutApp()));},
+                child: Icon(Icons.question_mark_rounded, color: Colors.blue, size: screenWidth*0.06,)
+            ),
+            SizedBox(width: screenWidth*0.04,)],
+        ),
+        body: Column(
+          children: [
+            SizedBox(height: screenHeight*0.03,),
+            _addAppsButton(context),
+            SizedBox(height: screenHeight*0.03,),
+            _listOfMonitoringApps(context)
+          ],
+        )
+    );
+  }
+
+  Future<void> restartMonitoringService() async {
+    debugPrint("Restarting Monitoring Service");
     status.clear();
     status = {0};
 
     if(await service.isRunning()) {
+      debugPrint("Stopping monitoring service");
       service.invoke(STOP_MONITORING_SERVICE_KEY);
     }
 
-    int retry = 0;
-    while(retry++<3 && await service.isRunning()) {
-      await Future.delayed(const Duration(seconds: 1));
-      debugPrint("stopping service");
-    }
+    await _waitForMonitoringServiceToStop();
 
-    retry = 0;
-    while(retry++<3 && !await service.startService()) {
-      await Future.delayed(const Duration(seconds: 1));
-      debugPrint("starting service");
-    }
+    await _startMonitoringService();
 
+    // Determine status of loading window
     if(await service.isRunning()) {
       status.clear();
       status = {1};
       return;
     }
+    else{
+      status.clear();
+      status = {2};
+    }
 
-    status.clear();
-    status = {2};
+  }
+
+  Future<void> _waitForMonitoringServiceToStop() async{
+    debugPrint("Waiting for monitoring service to stop, [Max 3 seconds]");
+    int retry = 0;
+    while(retry++<3 && await service.isRunning()) {
+    await Future.delayed(const Duration(seconds: 1));
+    debugPrint("Waiting for monitoring service to stop...");
+    }
+
+    if(await service.isRunning()){
+    debugPrint("*********************MONITORING SERVICE HASN'T STOPPED YET!!!!*******************");
+    }
+  }
+
+  Future<void> _startMonitoringService() async{
+    int retry = 0;
+    while(retry++<3 && !await service.startService()) {
+    await Future.delayed(const Duration(seconds: 1));
+    debugPrint("Starting monitoring service");
+    }
+
+    if(await service.isRunning()){
+      debugPrint("Monitoring Service Started!");
+    }
   }
 
   int getStatus() {
@@ -67,7 +121,8 @@ class _Home extends State<Home> {
     setState(() {});
   }
 
-  onDelete() {
+  onDelete(String appId) async{
+    await widget.dbService.removeAppData(appId);
     Navigator.of(context).pop();
     restartMonitoringService();
     LoadingBar.showLoadingDialog(
@@ -87,31 +142,7 @@ class _Home extends State<Home> {
     Navigator.pop(context);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Colors.greenAccent,
-        elevation: 0,
-        title: const Text("ADE App", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 25)),
-        actions: [
-          Icon(Icons.question_mark_rounded, color: Colors.blue, size: screenWidth*0.06,),
-          SizedBox(width: screenWidth*0.04,)],
-      ),
-      body: Column(
-              children: [
-                SizedBox(height: screenHeight*0.03,),
-                _addAppsButton(context),
-                SizedBox(height: screenHeight*0.03,),
-                _listOfMonitoringApps(context)
-              ],
-            )
-    );
-  }
 
   Widget _addAppsButton(BuildContext context){
     final double screenHeight = MediaQuery.of(context).size.height;
@@ -157,7 +188,10 @@ class _Home extends State<Home> {
               itemBuilder: (BuildContext context, int index){
                   ApplicationData appInfo = widget.dbService.getAllAppData().elementAt(index);
                   return ListTile(
-                    leading: Icon(Icons.arrow_forward_ios, size: screenWidth*0.05,),
+                    contentPadding: EdgeInsets.all(screenWidth*0.02),
+                    leading: appInfo.icon != null
+                        ? Image.memory(appInfo.icon!)
+                        : Icon(Icons.arrow_forward_ios, size: screenWidth*0.05,),
                     title: Text(appInfo.appName, style: const TextStyle(fontStyle: FontStyle.italic),),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -165,12 +199,11 @@ class _Home extends State<Home> {
                     ),
                     tileColor: Colors.pinkAccent.withOpacity(0.3),
                     trailing: InkWell(
-                        onTap: () async {
-                          await widget.dbService.removeAppData(appInfo.appId);
+                        onTap: () {
                           YesNoDialog(
                             displayText: 'Delete?',
                             acceptText: 'Yes',
-                            acceptFunction: onDelete,
+                            acceptFunction: () => onDelete(appInfo.appId),
                             rejectText: 'No',
                             rejectFunction: onFailure,
                           ).showBox(context);
@@ -268,13 +301,11 @@ class _Home extends State<Home> {
                           selected: selectedApps.containsKey(appInfo.packageName),
                           onTap: selectedApps.containsKey(appInfo.packageName)
                               ? (){
-                            // SetState for dialog and the parent
                             setStateDialog((){
                               selectedApps.remove(appInfo.packageName!);
                             });
                           }
                               :() {
-                            // SetState for dialog and the parent
                             setStateDialog((){
                               selectedApps.putIfAbsent(appInfo.packageName!, () => ApplicationData(appInfo.name!, appInfo.packageName!, appInfo.icon));
                             });

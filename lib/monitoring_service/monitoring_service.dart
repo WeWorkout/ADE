@@ -6,8 +6,6 @@ import 'package:ade/dtos/application_data.dart';
 import 'package:ade/monitoring_service/utils/user_usage_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/adapters.dart';
 import 'package:usage_stats/usage_stats.dart';
 
 
@@ -18,10 +16,8 @@ const String APP_NAMES_LIST_KEY = "appNames";
 // Entry Point for Monitoring Isolate
 @pragma('vm:entry-point')
 onMonitoringServiceStart(ServiceInstance service) async {
+  debugPrint("Starting Monitoring Service Isolate!");
   WidgetsFlutterBinding.ensureInitialized();
-  // await Hive.initFlutter();
-  // DartPluginRegistrant.ensureInitialized();
-  // UsageStats.grantUsagePermission();
   DatabaseService dbService = await DatabaseService.instance();
   await AlertDialogService.refreshDatabase();
 
@@ -35,7 +31,7 @@ onMonitoringServiceStart(ServiceInstance service) async {
   // Monitor all Apps periodically to trigger alert window service
   Map<String, UsageInfo> previousUsageSession = await getCurrentUsageStats();
   Timer.periodic(const Duration(seconds: 2), (timer) async{
-    _getMonitoringApplications(dbService, monitoredApplicationSet);
+    _setMonitoringApplicationsInSetFromBox(dbService, monitoredApplicationSet);
     Map<String, UsageInfo> currentUsageSession = await getCurrentUsageStats();
     String? appOpened = checkIfAnyAppHasBeenOpened(currentUsageSession, previousUsageSession, monitoredApplicationSet, openedApplicationsSet);
     if(appOpened != null){
@@ -55,7 +51,7 @@ _registerAllListeners(ServiceInstance service){
 
 }
 
-_getMonitoringApplications(DatabaseService dbService, Map<String, ApplicationData> monitoredApplicationSet) async {
+_setMonitoringApplicationsInSetFromBox(DatabaseService dbService, Map<String, ApplicationData> monitoredApplicationSet) async {
   List<ApplicationData> monitoredApps = dbService.getAllAppData();
   monitoredApplicationSet.clear();
   for(ApplicationData app in monitoredApps) {
