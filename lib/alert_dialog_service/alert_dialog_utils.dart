@@ -22,11 +22,11 @@ class AlertDialogUtils {
     await FlutterOverlayWindow.shareData(app.appId);
   }
 
-  static refreshDatabase() async {
+  static Future<void> refreshDatabase() async {
     await FlutterOverlayWindow.shareData("REFRESH DB");
   }
 
-  static closeAlertDialog() async {
+  static Future<void> closeAlertDialog() async {
     await FlutterOverlayWindow.closeOverlay();
   }
 

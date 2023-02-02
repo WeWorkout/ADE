@@ -43,7 +43,7 @@ class AlertDialogHeader extends StatelessWidget {
           child: Image.memory(app.icon!)) : null,
       title: Center(child: _getTitleAccordingToState()),
       trailing: IconButton(
-        onPressed: () => {AlertDialogService.closeAlertDialog()},
+        onPressed: () async{await AlertDialogService.closeAlertDialog();},
         icon: Icon(
           Icons.cancel,
           size: screenHeight * 0.05,

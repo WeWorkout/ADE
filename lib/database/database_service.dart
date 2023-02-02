@@ -21,7 +21,7 @@ class DatabaseService {
     return dbService;
   }
 
-  initializeHive() async {
+  Future<void> initializeHive() async {
     await Hive.initFlutter();
   }
 
@@ -32,7 +32,7 @@ class DatabaseService {
     }
   }
 
-  openBox() async {
+  Future<void> openBox() async {
     if(Hive.isBoxOpen(_boxName)) {
       debugPrint("Reopening the box so closing it first!");
       await close();
@@ -42,7 +42,7 @@ class DatabaseService {
     _box = await Hive.openBox(_boxName);
   }
 
-  close() async {
+  Future<void> close() async {
     if(Hive.isBoxOpen(_boxName)) {
       debugPrint("Closing the box!");
       await _box.close();
@@ -60,12 +60,12 @@ class DatabaseService {
     return _box.values.toList();
   }
 
-  addAppData(ApplicationData appData) async {
+  Future<void> addAppData(ApplicationData appData) async {
     debugPrint("Adding ${appData.appId} to box!");
     await _box.put(appData.appId, appData);
   }
 
-  addAllAppData(List<ApplicationData> appDatas) async {
+  Future<void> addAllAppData(List<ApplicationData> appDatas) async {
     for(ApplicationData appData in appDatas) {
       await addAppData(appData);
     }
@@ -75,7 +75,7 @@ class DatabaseService {
     return _box.toMap();
   }
 
-  removeAppData(String appId) async {
+  Future<void> removeAppData(String appId) async {
     debugPrint("Removing $appId from box!");
     await _box.delete(appId);
   }

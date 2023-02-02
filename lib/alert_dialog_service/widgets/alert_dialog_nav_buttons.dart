@@ -1,4 +1,3 @@
-
 import 'dart:ui';
 
 import 'package:ade/alert_dialog_service/alert_dialog_service.dart';
@@ -33,9 +32,10 @@ class AlertDialogNavButtons extends StatelessWidget {
   }
 
   Widget _startButton(BuildContext context) {
-    void onPressed() {
-      createTimerServiceForApp(DateTime.now().add(Duration(minutes: timeData["time"]!.toInt())), appName, appId);
-      AlertDialogService.closeAlertDialog();
+    void onPressed() async{
+      // Create Timer service will always override the ongoing timers if present
+      await createTimerServiceForApp(DateTime.now().add(Duration(minutes: timeData["time"]!.toInt())), appName, appId);
+      await AlertDialogService.closeAlertDialog();
     }
     return _customOutlinedButton(
       onPressed,
@@ -45,8 +45,8 @@ class AlertDialogNavButtons extends StatelessWidget {
   }
 
   Widget _dismissButton(BuildContext context) {
-    void onPressed() {
-      AlertDialogService.closeAlertDialog();
+    void onPressed() async{
+      await AlertDialogService.closeAlertDialog();
     }
     return _customOutlinedButton(
         onPressed,

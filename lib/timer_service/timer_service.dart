@@ -5,8 +5,8 @@ import 'dart:ui';
 import 'package:ade/timer_service/utils/foreground_service_utils.dart';
 import 'package:flutter/material.dart';
 
-createTimerServiceForApp(DateTime finishTime, String appName, String appId) async {
-  debugPrint("Timer Service started!");
+Future<void> createTimerServiceForApp(DateTime finishTime, String appName, String appId) async {
+  debugPrint("Timer Service started for $appName : $appId and time : ${finishTime}!");
   // Creates a foreground service with a notification
   initNotificationForegroundTask(finishTime, appName);
 

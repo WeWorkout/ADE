@@ -25,15 +25,15 @@ class AlertDialogService {
     }
   }
 
-  static createTimerExtensionAlertDialog() async {
+  static Future<void> createTimerExtensionAlertDialog() async {
     await AlertDialogUtils.showExtensionDialog();
   }
 
-  static refreshDatabase() async {
+  static Future<void> refreshDatabase() async {
     await AlertDialogUtils.refreshDatabase();
   }
 
-  static closeAlertDialog() {
-    AlertDialogUtils.closeAlertDialog();
+  static Future<void> closeAlertDialog() async{
+    await AlertDialogUtils.closeAlertDialog();
   }
 }

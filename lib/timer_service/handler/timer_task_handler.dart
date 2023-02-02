@@ -15,7 +15,7 @@ class TimerTaskHandler extends TaskHandler {
 
   @override
   Future<void> onStart(DateTime timestamp, SendPort? sendPort) async {
-
+    debugPrint("OnStart of timer service started!");
     Timer.periodic(const Duration(seconds: 1), (timer) async {
       bool isDone = false;
       DateTime currentTime = DateTime.now();
@@ -38,18 +38,18 @@ class TimerTaskHandler extends TaskHandler {
 
   @override
   Future<void> onEvent(DateTime timestamp, SendPort? sendPort) async {
-
+    debugPrint("OnEvent of timer service started!");
   }
 
   @override
   Future<void> onDestroy(DateTime timestamp, SendPort? sendPort) async {
+    debugPrint("OnDestroy of timer service started!");
     // You can use the clearAllData function to clear all the stored data.
     await killOngoingServiceIfAny();
   }
 
   @override
   void onButtonPressed(String id) {
-
   }
 
   @override
@@ -59,6 +59,6 @@ class TimerTaskHandler extends TaskHandler {
 
 _finalizeTimerService(String appName) async{
   debugPrint("Timer for ${appName} is complete!");
-  AlertDialogService.createTimerExtensionAlertDialog();
+  await AlertDialogService.createTimerExtensionAlertDialog();
   await killOngoingServiceIfAny();
 }

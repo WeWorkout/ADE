@@ -52,14 +52,14 @@ class _OverlayWidget extends State<OverlayWidget> {
 
   @override
   void initState() {
-    FlutterOverlayWindow.overlayListener.listen((event) {
+    FlutterOverlayWindow.overlayListener.listen((event) async{
       debugPrint("Event is ${event as String}");
       if (event == AlertDialogStatus.FIRST_TIME ||
           event == AlertDialogStatus.EXTENTION ||
           event == AlertDialogStatus.OVERRIDE) {
         status = event;
       } else if (event == "REFRESH DB") {
-        widget.dbService.openBox();
+        await widget.dbService.openBox();
       } else {
         appId = event;
         app = widget.dbService.getAppData(appId)!;
