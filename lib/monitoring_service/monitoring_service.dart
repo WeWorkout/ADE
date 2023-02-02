@@ -17,12 +17,13 @@ const String APP_NAMES_LIST_KEY = "appNames";
 
 // Entry Point for Monitoring Isolate
 @pragma('vm:entry-point')
-onMonitoringServiceStart(ServiceInstance service) async{
+onMonitoringServiceStart(ServiceInstance service) async {
   WidgetsFlutterBinding.ensureInitialized();
   // await Hive.initFlutter();
   // DartPluginRegistrant.ensureInitialized();
   // UsageStats.grantUsagePermission();
   DatabaseService dbService = await DatabaseService.instance();
+  await AlertDialogService.refreshDatabase();
 
   // Using AppIds as reference here
   Map<String, ApplicationData> monitoredApplicationSet = {};
@@ -34,7 +35,6 @@ onMonitoringServiceStart(ServiceInstance service) async{
   // Monitor all Apps periodically to trigger alert window service
   Map<String, UsageInfo> previousUsageSession = await getCurrentUsageStats();
   Timer.periodic(const Duration(seconds: 2), (timer) async{
-    await dbService.openBox();
     _getMonitoringApplications(dbService, monitoredApplicationSet);
     Map<String, UsageInfo> currentUsageSession = await getCurrentUsageStats();
     String? appOpened = checkIfAnyAppHasBeenOpened(currentUsageSession, previousUsageSession, monitoredApplicationSet, openedApplicationsSet);

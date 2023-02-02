@@ -20,6 +20,10 @@ class AlertDialogService {
     await AlertDialogUtils.showExtensionDialog();
   }
 
+  static refreshDatabase() async {
+    await AlertDialogUtils.refreshDatabase();
+  }
+
   static closeAlertDialog() {
     AlertDialogUtils.closeAlertDialog();
   }

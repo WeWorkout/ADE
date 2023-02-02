@@ -12,14 +12,15 @@ import 'package:usage_stats/usage_stats.dart';
 // This is the isolate entry for the Alert Window Service
 // It needs to be added in the main.dart file with the name "overlayMain"...(jugaadu code max by plugin dev)
 @pragma("vm:entry-point")
-void overlayMain() {
+void overlayMain() async {
   WidgetsFlutterBinding.ensureInitialized();
+  DatabaseService dbService = await DatabaseService.instance();
   runApp(MaterialApp(
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
       debugShowCheckedModeBanner: true,
-      home: OverlayWidget()
+      home: OverlayWidget(dbService)
   ));
 }
 

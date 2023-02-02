@@ -1,10 +1,14 @@
 
 import 'package:ade/database/database_service.dart';
 import 'package:ade/dtos/application_data.dart';
+import 'package:ade/main_app_ui/widgets/loading_dialog.dart';
+import 'package:ade/main_app_ui/widgets/yes_no_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:installed_apps/app_info.dart';
 import 'package:installed_apps/installed_apps.dart';
+
+import '../monitoring_service/monitoring_service.dart';
 
 class Home extends StatefulWidget {
 
@@ -17,10 +21,70 @@ class Home extends StatefulWidget {
 
 class _Home extends State<Home> {
   final service = FlutterBackgroundService();
+  Set<int> status = {0};
 
   @override
   void initState() {
     super.initState();
+  }
+
+  restartMonitoringService() async {
+    status.clear();
+    status = {0};
+
+    if(await service.isRunning()) {
+      service.invoke(STOP_MONITORING_SERVICE_KEY);
+    }
+
+    int retry = 0;
+    while(retry++<3 && await service.isRunning()) {
+      await Future.delayed(const Duration(seconds: 1));
+      debugPrint("stopping service");
+    }
+
+    retry = 0;
+    while(retry++<3 && !await service.startService()) {
+      await Future.delayed(const Duration(seconds: 1));
+      debugPrint("starting service");
+    }
+
+    if(await service.isRunning()) {
+      status.clear();
+      status = {1};
+      return;
+    }
+
+    status.clear();
+    status = {2};
+  }
+
+  int getStatus() {
+    return status.last;
+  }
+
+  onComplete() {
+    Navigator.of(context).pop();
+    setState(() {});
+  }
+
+  onDelete() {
+    Navigator.of(context).pop();
+    restartMonitoringService();
+    LoadingBar.showLoadingDialog(
+        parentContext: context,
+        loadingText: "Restarting Monitoring Service",
+        statusFunction: getStatus,
+        onComplete: onComplete,
+        onError: onFailure,
+        onTimeout: onFailure);
+  }
+
+  onAddComplete() {
+
+  }
+
+  onFailure() {
+    Navigator.pop(context);
   }
 
   @override
@@ -103,7 +167,13 @@ class _Home extends State<Home> {
                     trailing: InkWell(
                         onTap: () async {
                           await widget.dbService.removeAppData(appInfo.appId);
-                          setState(() {});
+                          YesNoDialog(
+                            displayText: 'Delete?',
+                            acceptText: 'Yes',
+                            acceptFunction: onDelete,
+                            rejectText: 'No',
+                            rejectFunction: onFailure,
+                          ).showBox(context);
                         },
                         child: Icon(Icons.delete, color: Colors.red, size: screenWidth*0.07,)
                     ),
@@ -222,8 +292,15 @@ class _Home extends State<Home> {
         MaterialButton(
           onPressed: () async {
             await widget.dbService.addAllAppData(selectedApps.values.toList());
-            setState(() {});
+            restartMonitoringService();
             Navigator.of(context).pop();
+            LoadingBar.showLoadingDialog(
+                parentContext: context,
+                loadingText: "Restarting Monitoring Service",
+                statusFunction: getStatus,
+                onComplete: onComplete,
+                onError: onFailure,
+                onTimeout: onFailure);
           },
           color: Colors.greenAccent,
           child: const Text("Done"),

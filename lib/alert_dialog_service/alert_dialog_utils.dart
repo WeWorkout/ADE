@@ -9,7 +9,6 @@ class AlertDialogUtils {
     await FlutterOverlayWindow.showOverlay();
     await FlutterOverlayWindow.shareData(AlertDialogStatus.FIRST_TIME);
     await FlutterOverlayWindow.shareData(app.appId);
-    await FlutterOverlayWindow.shareData("AppName-${app.appName}");
   }
 
   static showExtensionDialog() async {
@@ -20,8 +19,11 @@ class AlertDialogUtils {
   static showOverrideDialog(ApplicationData app) async {
     await FlutterOverlayWindow.showOverlay();
     await FlutterOverlayWindow.shareData(AlertDialogStatus.OVERRIDE);
-    await FlutterOverlayWindow.shareData("AppName-${app.appName}");
     await FlutterOverlayWindow.shareData(app.appId);
+  }
+
+  static refreshDatabase() async {
+    await FlutterOverlayWindow.shareData("REFRESH DB");
   }
 
   static closeAlertDialog() async {
