@@ -36,15 +36,15 @@ Future<bool> _startForegroundTask(ReceivePort? receivePort, String appName, Stri
   if(!isOverlayPermissionGranted){
     return false;
   }
+  // Will Override service if already running
+  bool reqResult;
+  await killOngoingServiceIfAny();
 
   bool sessionDataStored = await storeForegroundSessionData(appName, appId, finishTime);
   if(!sessionDataStored){
     return false;
   }
 
-  // Will Override service if already running
-  bool reqResult;
-  await killOngoingServiceIfAny();
 
   // Start the Foreground Service
   reqResult = await startForegroundService(appName, finishTime, startCallback);

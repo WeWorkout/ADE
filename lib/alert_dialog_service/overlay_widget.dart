@@ -1,4 +1,3 @@
-import 'package:ade/alert_dialog_service/alert_dialog_service.dart';
 import 'package:ade/alert_dialog_service/alert_dialog_status.dart';
 import 'package:ade/alert_dialog_service/widgets/alert_dialog_header.dart';
 import 'package:ade/alert_dialog_service/widgets/alert_dialog_nav_buttons.dart';
@@ -52,6 +51,7 @@ class _OverlayWidget extends State<OverlayWidget> {
 
   @override
   void initState() {
+    debugPrint("Alert Dialog Init State Called!");
     FlutterOverlayWindow.overlayListener.listen((event) async{
       debugPrint("Event is ${event as String}");
       if (event == AlertDialogStatus.FIRST_TIME ||
