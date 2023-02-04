@@ -3,12 +3,17 @@ import 'package:ade/dtos/application_data.dart';
 import 'package:flutter/material.dart';
 import 'package:usage_stats/usage_stats.dart';
 
-Future<Map<String, UsageInfo>> getCurrentUsageStats() async{
+Future<Map<String, UsageInfo>> getCurrentUsageStats(Map<String, ApplicationData> appIds) async{
   DateTime endDate = DateTime.now();
   DateTime startDate = endDate.subtract(const Duration(hours: 1));
 
   Map<String, UsageInfo> queryAndAggregateUsageStats = await UsageStats.queryAndAggregateUsageStats(startDate, endDate);
 
+  for(String key in queryAndAggregateUsageStats.keys) {
+    if(!appIds.containsKey(key)) {
+      queryAndAggregateUsageStats.remove(key);
+    }
+  }
   return queryAndAggregateUsageStats;
 }
 

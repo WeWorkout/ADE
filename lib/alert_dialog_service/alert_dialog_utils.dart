@@ -11,9 +11,10 @@ class AlertDialogUtils {
     await FlutterOverlayWindow.shareData(app.appId);
   }
 
-  static showExtensionDialog() async {
+  static showExtensionDialog(String appId) async {
     await FlutterOverlayWindow.showOverlay();
     await FlutterOverlayWindow.shareData(AlertDialogStatus.EXTENTION);
+    await FlutterOverlayWindow.shareData(appId);
   }
 
   static showOverrideDialog(ApplicationData app) async {
