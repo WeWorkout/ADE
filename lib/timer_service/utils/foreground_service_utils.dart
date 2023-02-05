@@ -9,14 +9,14 @@ const String APP_ID_CUSTOM_DATA_KEY = "App_ID";
 const String FINISH_TIME_CUSTOM_DATA_KEY = "Duration_Time";
 const String SERVICE_RUNNING_STATUS_MESSAGE_KEY = "isServiceRunning";
 
-void initNotificationForegroundTask(DateTime finishTime, String appName) {
+void initNotificationForegroundTask(DateTime finishTime) {
   debugPrint("Initializing Time Foreground Service!");
   FlutterForegroundTask.init(
     androidNotificationOptions: AndroidNotificationOptions(
-      channelName: 'Foreground Notification_$appName',
-      channelId: 'notification_channel_id_$appName',
+      channelName: 'Foreground Notification',
+      channelId: 'notification_channel_id',
       channelDescription:
-      'Timer Service is running for $appName!\n Duration: ${finishTime.toString()}',
+      'Timer Service is running for duration: ${finishTime.toString()}',
       channelImportance: NotificationChannelImportance.MAX,
       priority: NotificationPriority.MAX,
       iconData: const NotificationIconData(
@@ -43,9 +43,9 @@ void initNotificationForegroundTask(DateTime finishTime, String appName) {
   );
 }
 
-Future<bool> startForegroundService(String appName, DateTime finishTime, Function startCallBack){
+Future<bool> startForegroundService(DateTime finishTime, Function startCallBack){
   return FlutterForegroundTask.startService(
-    notificationTitle:  getNotificationTitle(appName, finishTime),
+    notificationTitle:  getNotificationTitle(finishTime),
     notificationText: getNotificationDescription(DateTime.now(), finishTime),
     callback: startCallBack,
   );
@@ -53,35 +53,31 @@ Future<bool> startForegroundService(String appName, DateTime finishTime, Functio
 
 void setTaskHandlerWithSessionData() async{
   // The setTaskHandler function must be called to handle the task in the background.
-  String? appName = await FlutterForegroundTask.getData(key: APP_NAME_CUSTOM_DATA_KEY) as String?;
-  String? appId = await FlutterForegroundTask.getData(key: APP_ID_CUSTOM_DATA_KEY) as String?;
   String? finishTimeString = await FlutterForegroundTask.getData(key: FINISH_TIME_CUSTOM_DATA_KEY) as String?;
 
-  if(appName == null || finishTimeString == null || appId == null){
-    debugPrint("AppName/FinishTime could not be received from custom data!");
+  if(finishTimeString == null){
+    debugPrint("FinishTime could not be received from custom data!");
     return;
   }
 
   DateTime finishTime = DateTime.parse(finishTimeString);
 
-  FlutterForegroundTask.setTaskHandler(TimerTaskHandler(appName, appId, finishTime));
+  FlutterForegroundTask.setTaskHandler(TimerTaskHandler(finishTime));
 }
 
-Future<bool> updateForegroundServiceNotification(String appName, DateTime finishTime, DateTime currentTime){
+Future<bool> updateForegroundServiceNotification(DateTime finishTime, DateTime currentTime){
   return FlutterForegroundTask.updateService(
-      notificationTitle: getNotificationTitle(appName, finishTime),
+      notificationTitle: getNotificationTitle(finishTime),
       notificationText: getNotificationDescription(currentTime, finishTime)
   );
 }
 
-Future<bool> storeForegroundSessionData(String appName, String appId, DateTime finishTime) async{
+Future<bool> storeForegroundSessionData(DateTime finishTime) async{
   // You can save data using the saveData function.
   // Here saving the App-Name and the Duration
-  bool appNameSet = await FlutterForegroundTask.saveData(key: APP_NAME_CUSTOM_DATA_KEY, value: appName);
-  bool appIdSet = await FlutterForegroundTask.saveData(key: APP_ID_CUSTOM_DATA_KEY, value: appId);
   bool finishTimeSet = await FlutterForegroundTask.saveData(key: FINISH_TIME_CUSTOM_DATA_KEY, value: finishTime.toString());
-  if(!(appNameSet && finishTimeSet && appIdSet)){
-    debugPrint("AppName/AppId/FinishTime could not be set in custom data!");
+  if(!finishTimeSet){
+    debugPrint("FinishTime could not be set in custom data!");
     return false;
   }
   return true;
@@ -120,12 +116,6 @@ Future<bool> isTimerServiceRunning() async{
   return FlutterForegroundTask.isRunningService;
 }
 
-Future<String?> getCurrentRunningAppId() async{
-  if(await isTimerServiceRunning()){
-    String? appId = await FlutterForegroundTask.getData(key: APP_ID_CUSTOM_DATA_KEY) as String?;
-    return appId;
-  }
-  else{
-    return null;
-  }
+Future<bool> getCurrentRunningAppId() {
+  return isTimerServiceRunning();
 }

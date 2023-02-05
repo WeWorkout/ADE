@@ -7,10 +7,8 @@ import 'package:flutter/material.dart';
 class AlertDialogNavButtons extends StatelessWidget {
 
   Map<String, double> timeData;
-  String appName;
-  String appId;
 
-  AlertDialogNavButtons(this.timeData, this.appName, this.appId);
+  AlertDialogNavButtons(this.timeData);
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +32,7 @@ class AlertDialogNavButtons extends StatelessWidget {
   Widget _startButton(BuildContext context) {
     void onPressed() async{
       // Create Timer service will always override the ongoing timers if present
-      await createTimerServiceForApp(DateTime.now().add(Duration(minutes: timeData["time"]!.toInt())), appName, appId);
+      await createTimerServiceForApp(DateTime.now().add(Duration(minutes: timeData["time"]!.toInt())));
       await AlertDialogService.closeAlertDialog();
     }
     return _customOutlinedButton(

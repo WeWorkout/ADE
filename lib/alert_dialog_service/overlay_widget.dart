@@ -1,28 +1,12 @@
 import 'package:ade/alert_dialog_service/widgets/alert_dialog_header.dart';
 import 'package:ade/alert_dialog_service/widgets/alert_dialog_nav_buttons.dart';
 import 'package:ade/alert_dialog_service/widgets/alert_dialog_timer.dart';
-import 'package:ade/dtos/application_data.dart';
 import 'package:flutter/material.dart';
 
-
-class OverlayWidget extends StatefulWidget {
-
-  String dialogStatus;
-  ApplicationData app;
-
-  OverlayWidget(this.dialogStatus, this.app);
-
-  @override
-  State<OverlayWidget> createState() => _OverlayWidgetState();
-
-}
-
-class _OverlayWidgetState extends State<OverlayWidget> {
+class OverlayWidget extends StatelessWidget {
 
 
   Map<String, double> timeData = {"time": 0.5};
-
-  double time = 0.5;
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +24,9 @@ class _OverlayWidgetState extends State<OverlayWidget> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            AlertDialogHeader(widget.app, widget.dialogStatus),
+            AlertDialogHeader(),
             AlertDialogTimer(timeData),
-            AlertDialogNavButtons(timeData, widget.app.appName, widget.app.appId)
+            AlertDialogNavButtons(timeData)
           ],
         ),
       ),

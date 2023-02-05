@@ -5,16 +5,16 @@ import 'dart:ui';
 import 'package:ade/timer_service/utils/foreground_service_utils.dart';
 import 'package:flutter/material.dart';
 
-Future<void> createTimerServiceForApp(DateTime finishTime, String appName, String appId) async {
-  debugPrint("Timer Service started for $appName : $appId and time : ${finishTime}!");
+Future<void> createTimerServiceForApp(DateTime finishTime) async {
+  debugPrint("Timer Service started for time : $finishTime!");
   // Creates a foreground service with a notification
-  initNotificationForegroundTask(finishTime, appName);
+  initNotificationForegroundTask(finishTime);
 
   // Initialize the receiver port
   final receivePort = await getForegroundServiceReceivePort();
 
   // Start the foreground Service
-  _startForegroundTask(receivePort, appName, appId, finishTime);
+  _startForegroundTask(receivePort, finishTime);
 }
 
 // Isolate Code
@@ -30,7 +30,7 @@ void startCallback() async{
 
 }
 
-Future<bool> _startForegroundTask(ReceivePort? receivePort, String appName, String appId, DateTime finishTime) async {
+Future<bool> _startForegroundTask(ReceivePort? receivePort, DateTime finishTime) async {
   // Ask for permissions for overlay if not yet granted!
   bool isOverlayPermissionGranted = await checkForOverlayPermissions();
   if(!isOverlayPermissionGranted){
@@ -40,14 +40,14 @@ Future<bool> _startForegroundTask(ReceivePort? receivePort, String appName, Stri
   bool reqResult;
   await killOngoingServiceIfAny();
 
-  bool sessionDataStored = await storeForegroundSessionData(appName, appId, finishTime);
+  bool sessionDataStored = await storeForegroundSessionData(finishTime);
   if(!sessionDataStored){
     return false;
   }
 
 
   // Start the Foreground Service
-  reqResult = await startForegroundService(appName, finishTime, startCallback);
+  reqResult = await startForegroundService(finishTime, startCallback);
 
   // Check if it was successful and register listener
   if (reqResult) {

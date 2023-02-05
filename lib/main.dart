@@ -1,17 +1,13 @@
-import 'dart:isolate';
 
 import 'package:ade/alert_dialog_service/overlay_widget.dart';
 import 'package:ade/database/database_service.dart';
-import 'package:ade/dtos/application_data.dart';
 import 'package:ade/main_app_ui/home.dart';
 import 'package:ade/main_app_ui/permissions_screen.dart';
 import 'package:ade/startup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
-import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:usage_stats/usage_stats.dart';
 
-import 'alert_dialog_service/alert_dialog_events.dart';
 
 // This is the isolate entry for the Alert Window Service
 // It needs to be added in the main.dart file with the name "overlayMain"...(jugaadu code max by plugin dev)
@@ -19,36 +15,13 @@ import 'alert_dialog_service/alert_dialog_events.dart';
 void overlayMain() async {
   debugPrint("Starting Alerting Window Isolate!");
   WidgetsFlutterBinding.ensureInitialized();
-  DatabaseService dbService = await DatabaseService.instance();
-
-  String dialogStatus = AlertDialogEvents.FIRST_TIME;
-  ApplicationData app = ApplicationData("ADE", "com.ade.ade", null);
-
-  FlutterOverlayWindow.overlayListener.listen((event) async {
-    List<String> instructions = (event as String).split(",");
-    debugPrint("Received event $event");
-    for(String instruction in instructions) {
-      if (instruction == AlertDialogEvents.SHOW_DIALOG) {
-
-      } else if (instruction == AlertDialogEvents.FIRST_TIME ||
-          instruction == AlertDialogEvents.EXTENSION ||
-          instruction == AlertDialogEvents.OVERRIDE) {
-        dialogStatus = instruction;
-      } else if (instruction == AlertDialogEvents.REFRESH_DB) {
-        await dbService.openBox();
-      } else {
-        app.appId = instruction;
-        app = dbService.getAppData(app.appId)!;
-      }
-    }
-  });
 
   runApp(MaterialApp(
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
       debugShowCheckedModeBanner: true,
-      home: OverlayWidget(dialogStatus, app)
+      home: OverlayWidget()
   ));
 }
 

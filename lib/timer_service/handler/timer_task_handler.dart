@@ -8,10 +8,8 @@ import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 
 class TimerTaskHandler extends TaskHandler {
   final DateTime finishTime;
-  final String appName;
-  final String appId;
 
-  TimerTaskHandler(this.appName, this.appId, this.finishTime);
+  TimerTaskHandler(this.finishTime);
 
   @override
   Future<void> onStart(DateTime timestamp, SendPort? sendPort) async {
@@ -22,11 +20,11 @@ class TimerTaskHandler extends TaskHandler {
 
       if(finishTime.isBefore(currentTime) || finishTime.isAtSameMomentAs(currentTime)){
         timer.cancel();
-        await _finalizeTimerService(appId);
+        await _finalizeTimerService();
         isDone = true;
       }
       if(!isDone){
-        bool updateNotification = await updateForegroundServiceNotification(appName, finishTime, currentTime);
+        bool updateNotification = await updateForegroundServiceNotification(finishTime, currentTime);
         if(!updateNotification){
           debugPrint("Notification was not updated!");
         }
@@ -57,8 +55,8 @@ class TimerTaskHandler extends TaskHandler {
   }
 }
 
-_finalizeTimerService(String appId) async{
-  debugPrint("Timer for ${appId} is complete!");
-  await AlertDialogService.createTimerExtensionAlertDialog(appId);
+_finalizeTimerService() async{
+  debugPrint("Timer is complete!");
+  await AlertDialogService.createAlertDialog();
   await killOngoingServiceIfAny();
 }

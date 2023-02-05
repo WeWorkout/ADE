@@ -19,7 +19,6 @@ onMonitoringServiceStart(ServiceInstance service) async {
   debugPrint("Starting Monitoring Service Isolate!");
   WidgetsFlutterBinding.ensureInitialized();
   DatabaseService dbService = await DatabaseService.instance();
-  await AlertDialogService.refreshDatabase();
 
   // Using AppIds as reference here
   Map<String, ApplicationData> monitoredApplicationSet = {};
@@ -40,7 +39,7 @@ Future<void> _startTimer(DatabaseService dbService, Map<String, ApplicationData>
     String? appOpened = checkIfAnyAppHasBeenOpened(currentUsageSession, previousUsageSession, monitoredApplicationSet);
     if(appOpened != null){
       // Open Alert Window overlay
-      AlertDialogService.createAlertDialog(monitoredApplicationSet[appOpened]!);
+      AlertDialogService.createAlertDialog();
     }
     previousUsageSession = currentUsageSession;
     _startTimer(dbService, monitoredApplicationSet, previousUsageSession);
