@@ -1,28 +1,28 @@
-import 'package:ade/alert_dialog_service/alert_dialog_status.dart';
 import 'package:ade/alert_dialog_service/widgets/alert_dialog_header.dart';
 import 'package:ade/alert_dialog_service/widgets/alert_dialog_nav_buttons.dart';
 import 'package:ade/alert_dialog_service/widgets/alert_dialog_timer.dart';
-import 'package:ade/database/database_service.dart';
 import 'package:ade/dtos/application_data.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_overlay_window/flutter_overlay_window.dart';
+
 
 class OverlayWidget extends StatefulWidget {
-  DatabaseService dbService;
 
-  OverlayWidget(this.dbService);
+  String dialogStatus;
+  ApplicationData app;
+
+  OverlayWidget(this.dialogStatus, this.app);
 
   @override
-  State<OverlayWidget> createState() => _OverlayWidget();
+  State<OverlayWidget> createState() => _OverlayWidgetState();
+
 }
 
-class _OverlayWidget extends State<OverlayWidget> {
+class _OverlayWidgetState extends State<OverlayWidget> {
+
+
   Map<String, double> timeData = {"time": 0.5};
 
   double time = 0.5;
-  String status = AlertDialogStatus.FIRST_TIME;
-  String appId = "com.ade.ade";
-  ApplicationData app = ApplicationData("ADE", "com.ade.ade", null);
 
   @override
   Widget build(BuildContext context) {
@@ -40,39 +40,12 @@ class _OverlayWidget extends State<OverlayWidget> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            AlertDialogHeader(app, status),
+            AlertDialogHeader(widget.app, widget.dialogStatus),
             AlertDialogTimer(timeData),
-            AlertDialogNavButtons(timeData, app.appName, appId)
+            AlertDialogNavButtons(timeData, widget.app.appName, widget.app.appId)
           ],
         ),
       ),
     );
-  }
-
-  @override
-  void initState() {
-    debugPrint("Alert Dialog Init State Called!");
-    FlutterOverlayWindow.overlayListener.listen((event) async{
-      debugPrint("Event is ${event as String}");
-      if (event == AlertDialogStatus.FIRST_TIME ||
-          event == AlertDialogStatus.EXTENTION ||
-          event == AlertDialogStatus.OVERRIDE) {
-        status = event;
-      } else if (event == "REFRESH DB") {
-        await widget.dbService.openBox();
-      } else {
-        appId = event;
-        app = widget.dbService.getAppData(appId)!;
-      }
-      setState(() {});
-    });
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    debugPrint("Overlay Disposed!");
-    super.dispose();
   }
 }

@@ -30,15 +30,17 @@ onMonitoringServiceStart(ServiceInstance service) async {
 
   // Monitor all Apps periodically to trigger alert window service
   Map<String, UsageInfo> previousUsageSession = await getCurrentUsageStats(monitoredApplicationSet);
-  Timer.periodic(const Duration(seconds: 2), (timer) async{
+  Timer.periodic(const Duration(seconds: 1), (timer) async {
+    //debugPrint("Periodic START ${timer.tick}");
     _setMonitoringApplicationsInSetFromBox(dbService, monitoredApplicationSet);
     Map<String, UsageInfo> currentUsageSession = await getCurrentUsageStats(monitoredApplicationSet);
     String? appOpened = checkIfAnyAppHasBeenOpened(currentUsageSession, previousUsageSession, monitoredApplicationSet, openedApplicationsSet);
     if(appOpened != null){
       // Open Alert Window overlay
-      AlertDialogService.createAlertDialog(monitoredApplicationSet[appOpened]!);
+      await AlertDialogService.createAlertDialog(monitoredApplicationSet[appOpened]!);
     }
     previousUsageSession = currentUsageSession;
+    //debugPrint("Periodic END ${timer.tick}");
   });
 
 }
@@ -51,7 +53,7 @@ _registerAllListeners(ServiceInstance service){
 
 }
 
-_setMonitoringApplicationsInSetFromBox(DatabaseService dbService, Map<String, ApplicationData> monitoredApplicationSet) async {
+_setMonitoringApplicationsInSetFromBox(DatabaseService dbService, Map<String, ApplicationData> monitoredApplicationSet) {
   List<ApplicationData> monitoredApps = dbService.getAllAppData();
   monitoredApplicationSet.clear();
   for(ApplicationData app in monitoredApps) {

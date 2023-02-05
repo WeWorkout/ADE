@@ -1,6 +1,6 @@
 
 import 'package:ade/alert_dialog_service/alert_dialog_service.dart';
-import 'package:ade/alert_dialog_service/alert_dialog_status.dart';
+import 'package:ade/alert_dialog_service/alert_dialog_events.dart';
 import 'package:ade/database/database_service.dart';
 import 'package:ade/dtos/application_data.dart';
 import 'package:flutter/material.dart';
@@ -26,9 +26,9 @@ class AlertDialogHeader extends StatelessWidget {
   }
 
   Widget _getTitleAccordingToState() {
-    if(state == AlertDialogStatus.EXTENTION) {
+    if(state == AlertDialogEvents.EXTENSION) {
       return const Text("Extend Timer?", style: TextStyle(fontSize: 16),);
-    } else if(state == AlertDialogStatus.OVERRIDE) {
+    } else if(state == AlertDialogEvents.OVERRIDE) {
       return const Text("(Will replace the previous timer)");
     }
     return const SizedBox.shrink();

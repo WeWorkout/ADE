@@ -7,7 +7,7 @@ class AlertDialogService {
 
   // The isolate function for this service has been defined in the main class file!
 
-  static createAlertDialog(ApplicationData app) async {
+  static Future<void> createAlertDialog(ApplicationData app) async {
     // Check if an app is already being timed
     String? currentAppId = await getCurrentRunningAppId();
 

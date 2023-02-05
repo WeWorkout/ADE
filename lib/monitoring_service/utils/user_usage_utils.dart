@@ -9,7 +9,8 @@ Future<Map<String, UsageInfo>> getCurrentUsageStats(Map<String, ApplicationData>
 
   Map<String, UsageInfo> queryAndAggregateUsageStats = await UsageStats.queryAndAggregateUsageStats(startDate, endDate);
 
-  for(String key in queryAndAggregateUsageStats.keys) {
+  List<String> keys = queryAndAggregateUsageStats.keys.toList();
+  for(String key in keys) {
     if(!appIds.containsKey(key)) {
       queryAndAggregateUsageStats.remove(key);
     }

@@ -1,30 +1,36 @@
 
-import 'package:ade/alert_dialog_service/alert_dialog_status.dart';
+import 'package:ade/alert_dialog_service/alert_dialog_events.dart';
 import 'package:ade/dtos/application_data.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 
 class AlertDialogUtils {
 
+  static Future<void> showDialog() async {
+    await FlutterOverlayWindow.shareData(AlertDialogEvents.SHOW_DIALOG);
+    await FlutterOverlayWindow.showOverlay(overlayTitle: "TEST", overlayContent: "CONTENT");
+  }
+
   static showFirstTimeDialog(ApplicationData app) async {
-    await FlutterOverlayWindow.showOverlay();
-    await FlutterOverlayWindow.shareData(AlertDialogStatus.FIRST_TIME);
-    await FlutterOverlayWindow.shareData(app.appId);
+    debugPrint("Sending event for ${AlertDialogEvents.FIRST_TIME},${app.appId}");
+    await FlutterOverlayWindow.shareData("${AlertDialogEvents.FIRST_TIME},${app.appId}");
+    await showDialog();
   }
 
   static showExtensionDialog(String appId) async {
-    await FlutterOverlayWindow.showOverlay();
-    await FlutterOverlayWindow.shareData(AlertDialogStatus.EXTENTION);
-    await FlutterOverlayWindow.shareData(appId);
+    debugPrint("Sending event for ${AlertDialogEvents.EXTENSION},$appId");
+    await FlutterOverlayWindow.shareData("${AlertDialogEvents.EXTENSION},$appId");
+    await showDialog();
   }
 
   static showOverrideDialog(ApplicationData app) async {
-    await FlutterOverlayWindow.showOverlay();
-    await FlutterOverlayWindow.shareData(AlertDialogStatus.OVERRIDE);
-    await FlutterOverlayWindow.shareData(app.appId);
+    debugPrint("Sending event for ${AlertDialogEvents.OVERRIDE},${app.appId}");
+    await FlutterOverlayWindow.shareData("${AlertDialogEvents.OVERRIDE},${app.appId}");
+    await showDialog();
   }
 
   static Future<void> refreshDatabase() async {
-    await FlutterOverlayWindow.shareData("REFRESH DB");
+    await FlutterOverlayWindow.shareData(AlertDialogEvents.REFRESH_DB);
   }
 
   static Future<void> closeAlertDialog() async {
@@ -37,4 +43,6 @@ class AlertDialogUtils {
       await FlutterOverlayWindow.requestPermission();
     }
   }
+
+
 }
