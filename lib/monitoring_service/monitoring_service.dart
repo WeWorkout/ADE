@@ -23,25 +23,31 @@ onMonitoringServiceStart(ServiceInstance service) async {
 
   // Using AppIds as reference here
   Map<String, ApplicationData> monitoredApplicationSet = {};
-  Set<String> openedApplicationsSet = {};
 
   _registerAllListeners(service);
 
-
   // Monitor all Apps periodically to trigger alert window service
   Map<String, UsageInfo> previousUsageSession = await getCurrentUsageStats();
-  Timer.periodic(const Duration(seconds: 2), (timer) async{
+  _startTimer(dbService, monitoredApplicationSet, previousUsageSession);
+
+}
+
+Future<void> _startTimer(DatabaseService dbService, Map<String, ApplicationData> monitoredApplicationSet, Map<String, UsageInfo> previousUsageSession) async{
+  Timer.periodic(const Duration(seconds: 1), (timer) async{
+    timer.cancel();
     _setMonitoringApplicationsInSetFromBox(dbService, monitoredApplicationSet);
     Map<String, UsageInfo> currentUsageSession = await getCurrentUsageStats();
-    String? appOpened = checkIfAnyAppHasBeenOpened(currentUsageSession, previousUsageSession, monitoredApplicationSet, openedApplicationsSet);
+    String? appOpened = checkIfAnyAppHasBeenOpened(currentUsageSession, previousUsageSession, monitoredApplicationSet);
     if(appOpened != null){
       // Open Alert Window overlay
       AlertDialogService.createAlertDialog(monitoredApplicationSet[appOpened]!);
     }
     previousUsageSession = currentUsageSession;
+    _startTimer(dbService, monitoredApplicationSet, previousUsageSession);
   });
-
 }
+
+
 
 _registerAllListeners(ServiceInstance service){
   // Register a listener to stop the monitoring service
