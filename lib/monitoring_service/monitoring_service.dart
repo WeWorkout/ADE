@@ -27,7 +27,7 @@ onMonitoringServiceStart(ServiceInstance service) async {
   _registerAllListeners(service);
 
   // Monitor all Apps periodically to trigger alert window service
-  Map<String, UsageInfo> previousUsageSession = await getCurrentUsageStats();
+  Map<String, UsageInfo> previousUsageSession = await getCurrentUsageStats(monitoredApplicationSet);
   _startTimer(dbService, monitoredApplicationSet, previousUsageSession);
 
 }
@@ -36,7 +36,7 @@ Future<void> _startTimer(DatabaseService dbService, Map<String, ApplicationData>
   Timer.periodic(const Duration(seconds: 1), (timer) async{
     timer.cancel();
     _setMonitoringApplicationsInSetFromBox(dbService, monitoredApplicationSet);
-    Map<String, UsageInfo> currentUsageSession = await getCurrentUsageStats();
+    Map<String, UsageInfo> currentUsageSession = await getCurrentUsageStats(monitoredApplicationSet);
     String? appOpened = checkIfAnyAppHasBeenOpened(currentUsageSession, previousUsageSession, monitoredApplicationSet);
     if(appOpened != null){
       // Open Alert Window overlay

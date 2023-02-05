@@ -6,8 +6,8 @@ import 'package:hive_flutter/adapters.dart';
 class DatabaseService {
 
   bool _isInitialized = false;
-  static final Finalizer<Box<ApplicationData>> _finalizer =
-  Finalizer((box) => box.close());
+  // static final Finalizer<Box<ApplicationData>> _finalizer =
+  // Finalizer((box) => box.close());
 
 
   final String _boxName = "application-data";
@@ -46,7 +46,7 @@ class DatabaseService {
     if(Hive.isBoxOpen(_boxName)) {
       debugPrint("Closing the box!");
       await _box.close();
-      _finalizer.detach(this);
+      //_finalizer.detach(this);
     } else {
       debugPrint("Box not open!");
     }

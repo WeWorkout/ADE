@@ -22,7 +22,7 @@ class TimerTaskHandler extends TaskHandler {
 
       if(finishTime.isBefore(currentTime) || finishTime.isAtSameMomentAs(currentTime)){
         timer.cancel();
-        await _finalizeTimerService(appName);
+        await _finalizeTimerService(appId);
         isDone = true;
       }
       if(!isDone){
@@ -57,8 +57,8 @@ class TimerTaskHandler extends TaskHandler {
   }
 }
 
-_finalizeTimerService(String appName) async{
-  debugPrint("Timer for ${appName} is complete!");
-  await AlertDialogService.createTimerExtensionAlertDialog();
+_finalizeTimerService(String appId) async{
+  debugPrint("Timer for ${appId} is complete!");
+  await AlertDialogService.createTimerExtensionAlertDialog(appId);
   await killOngoingServiceIfAny();
 }

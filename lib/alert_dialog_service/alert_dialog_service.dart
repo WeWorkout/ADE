@@ -7,7 +7,7 @@ class AlertDialogService {
 
   // The isolate function for this service has been defined in the main class file!
 
-  static createAlertDialog(ApplicationData app) async {
+  static Future<void> createAlertDialog(ApplicationData app) async {
     // Check if an app is already being timed
     String? currentAppId = await getCurrentRunningAppId();
 
@@ -25,8 +25,8 @@ class AlertDialogService {
     }
   }
 
-  static Future<void> createTimerExtensionAlertDialog() async {
-    await AlertDialogUtils.showExtensionDialog();
+  static Future<void> createTimerExtensionAlertDialog(String appId) async {
+    await AlertDialogUtils.showExtensionDialog(appId);
   }
 
   static Future<void> refreshDatabase() async {
