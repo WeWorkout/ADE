@@ -21,7 +21,7 @@ class YesNoDialog{
           return SizedBox(
             height: screenHeight*0.35,
             child: AlertDialog(
-              backgroundColor: Colors.white,
+              //backgroundColor: Colors.white,
               shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
               title: Column(
                 children: <Widget>[
@@ -34,12 +34,18 @@ class YesNoDialog{
                   MaterialButton(
                     onPressed: () => acceptFunction(),
                     color: Colors.green,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                     child: Text(acceptText, style: TextStyle(fontSize: screenWidth*0.04),),
                   ),
                   const Spacer(),
                   MaterialButton(
                     onPressed: () => rejectFunction(),
                     color: Colors.red,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                     child: Text(rejectText, style: TextStyle(fontSize: screenWidth*0.04),),
                   ),
                 ],

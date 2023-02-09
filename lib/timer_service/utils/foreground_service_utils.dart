@@ -23,7 +23,7 @@ void initNotificationForegroundTask(DateTime finishTime) {
         resType: ResourceType.mipmap,
         resPrefix: ResourcePrefix.ic,
         name: 'launcher',
-        backgroundColor: Colors.green,
+        //backgroundColor: Colors.blue,
       ),
 
     ),

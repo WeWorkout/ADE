@@ -1,6 +1,5 @@
 import 'package:ade/main_app_ui/widgets/devs/abhinav_card.dart';
 import 'package:ade/main_app_ui/widgets/devs/purushottam_card.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AboutApp extends StatelessWidget{
@@ -10,18 +9,17 @@ class AboutApp extends StatelessWidget{
     final double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-        backgroundColor: Colors.greenAccent,
         appBar: AppBar(
           centerTitle: true,
-          backgroundColor: Colors.greenAccent,
+          backgroundColor: Colors.black,
           elevation: 0,
           leading: InkWell(
               onTap: (){
                 Navigator.of(context).pop();
               },
-              child: Icon(Icons.arrow_back_ios, size: screenWidth*0.06,)
+              child: Icon(Icons.arrow_back_ios, size: screenWidth*0.06, color: Colors.white,)
           ),
-          title: const Text("About ADE App", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 25)),
+          title: const Text("About Inner Authority", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25)),
         ),
         body: Column(
           children: [

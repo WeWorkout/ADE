@@ -58,11 +58,16 @@ class AlertDialogNavButtons extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     return OutlinedButton(
       style: OutlinedButton.styleFrom(
-        fixedSize: Size(screenWidth*0.25, screenHeight*0.05)
+        fixedSize: Size(screenWidth*0.25, screenHeight*0.05),
+        side: const BorderSide(color: Colors.white, width: 2),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20)
+        )
       ),
         onPressed: onPressed,
         child: Text(
-          text
+          text,
+          style: const TextStyle(color: Colors.white),
         ));
   }
 

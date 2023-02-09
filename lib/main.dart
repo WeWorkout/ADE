@@ -4,6 +4,7 @@ import 'package:ade/database/database_service.dart';
 import 'package:ade/main_app_ui/home.dart';
 import 'package:ade/main_app_ui/permissions_screen.dart';
 import 'package:ade/startup.dart';
+import 'package:ade/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:usage_stats/usage_stats.dart';
@@ -17,9 +18,7 @@ void overlayMain() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   runApp(MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-      ),
+      theme: Themes.mainTheme(),
       debugShowCheckedModeBanner: true,
       home: OverlayWidget()
   ));
@@ -48,9 +47,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-      ),
+      theme: Themes.mainTheme(),
       home: screenToDisplay,
     );
   }

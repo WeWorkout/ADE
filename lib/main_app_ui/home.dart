@@ -37,11 +37,12 @@ class _Home extends State<Home> {
     final double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+        //backgroundColor: Theme.of(context).colorScheme.primary,
         appBar: AppBar(
           centerTitle: true,
-          backgroundColor: Colors.greenAccent,
+          backgroundColor: Colors.black,
           elevation: 0,
-          title: const Text("ADE App", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 25)),
+          title: const Text("Inner Authority", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25)),
           actions: [
             InkWell(
                 onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => AboutApp()));},
@@ -121,7 +122,7 @@ class _Home extends State<Home> {
     setState(() {});
   }
 
-  onDelete(String appId) async{
+  onDelete(String appId) async {
     await widget.dbService.removeAppData(appId);
     Navigator.of(context).pop();
     restartMonitoringService();
@@ -157,7 +158,7 @@ class _Home extends State<Home> {
           children: [
             Icon(Icons.add_circle_outline_outlined, size: screenWidth*0.15,),
             SizedBox(height: screenHeight*0.01,),
-            const Text("Add an Application")
+            const Text("Add Application")
           ],
         ),
       ),
@@ -170,14 +171,15 @@ class _Home extends State<Home> {
 
     return Center(
       child: Card(
-        elevation: 10.0,
+        clipBehavior: Clip.hardEdge,
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          //side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2)
+        ),
         child: Container(
           height: screenHeight*0.5,
           width: screenWidth*0.9,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.black)
-          ),
           padding: EdgeInsets.all(screenWidth*0.05),
           child: widget.dbService.getAllAppData().isNotEmpty
               ? ListView.separated(
@@ -188,16 +190,16 @@ class _Home extends State<Home> {
               itemBuilder: (BuildContext context, int index){
                   ApplicationData appInfo = widget.dbService.getAllAppData().elementAt(index);
                   return ListTile(
-                    contentPadding: EdgeInsets.all(screenWidth*0.02),
+                    contentPadding: EdgeInsets.all(screenWidth*0.025),
                     leading: appInfo.icon != null
-                        ? Image.memory(appInfo.icon!)
-                        : Icon(Icons.arrow_forward_ios, size: screenWidth*0.05,),
+                        ? Image.memory(appInfo.icon!, width: screenWidth*0.1)
+                        : Icon(Icons.arrow_forward_ios, size: screenWidth*0.05),
                     title: Text(appInfo.appName, style: const TextStyle(fontStyle: FontStyle.italic),),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      side: const BorderSide(color: Colors.black, width: 1),
+                      borderRadius: BorderRadius.circular(20),
+                      side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
                     ),
-                    tileColor: Colors.pinkAccent.withOpacity(0.3),
+                    //tileColor: Theme.of(context).colorScheme.primary,
                     trailing: InkWell(
                         onTap: () {
                           YesNoDialog(
@@ -208,7 +210,7 @@ class _Home extends State<Home> {
                             rejectFunction: onFailure,
                           ).showBox(context);
                         },
-                        child: Icon(Icons.delete, color: Colors.red, size: screenWidth*0.07,)
+                        child: Icon(Icons.delete, color: Colors.redAccent, size: screenWidth*0.07,)
                     ),
                   );
                 }
@@ -240,13 +242,13 @@ class _Home extends State<Home> {
             builder: (BuildContext context, Function(void Function()) setStateDialog){
               return Dialog(
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15)
+                    borderRadius: BorderRadius.circular(20)
                 ),
-                elevation: 15,
+                elevation: 5,
                 child: Container(
                   padding: EdgeInsets.all(screenWidth*0.02),
-                  height: screenHeight*0.85,
-                  width: screenHeight*0.95,
+                  height: screenHeight*0.8,
+                  width: screenWidth*0.9,
                   child: FutureBuilder<List<AppInfo>>(
                       future: InstalledApps.getInstalledApps(true, true),
                       builder: (context, AsyncSnapshot<List<AppInfo>> appsList) {
@@ -276,11 +278,10 @@ class _Home extends State<Home> {
     return Column(
       children: [
         SizedBox(height: screenHeight*0.02,),
-        Text("Select Applications here", style: TextStyle(fontSize: screenWidth*0.04, decoration: TextDecoration.underline),),
+        Text("Select Applications", style: TextStyle(fontSize: screenWidth*0.04),),
         SizedBox(height: screenHeight*0.04,),
         SizedBox(
-          height: screenHeight*0.65,
-          width: screenWidth*0.85,
+          height: screenHeight*0.6,
           child: Column(
             children: [
               Flexible(
@@ -289,15 +290,16 @@ class _Home extends State<Home> {
                     itemBuilder: (context, index) {
                       AppInfo appInfo = apps[index];
                       return Card(
-                        elevation: 12,
+                        clipBehavior: Clip.hardEdge,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
+                        ),
+                        elevation: selectedApps.containsKey(appInfo.packageName) ? 1 : 0,
                         child: ListTile(
-                          contentPadding: EdgeInsets.all(screenWidth*0.01),
-                          selectedColor: Colors.black,
-                          selectedTileColor: Colors.greenAccent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            side: const BorderSide(color: Colors.black, width: 1),
-                          ),
+                          contentPadding: EdgeInsets.all(screenWidth*0.02),
+                          selectedColor: Colors.white,
+                          selectedTileColor: Theme.of(context).colorScheme.primary,
                           selected: selectedApps.containsKey(appInfo.packageName),
                           onTap: selectedApps.containsKey(appInfo.packageName)
                               ? (){
@@ -310,7 +312,7 @@ class _Home extends State<Home> {
                               selectedApps.putIfAbsent(appInfo.packageName!, () => ApplicationData(appInfo.name!, appInfo.packageName!, appInfo.icon));
                             });
                           },
-                          leading: Image.memory(apps[index].icon!),
+                          leading: Image.memory(apps[index].icon!, width: screenWidth*0.1),
                           title: Text(apps[index].name!),
                         ),
                       );
@@ -319,7 +321,7 @@ class _Home extends State<Home> {
             ],
           ),
         ),
-        SizedBox(height: screenHeight*0.02,),
+        const Spacer(),
         MaterialButton(
           onPressed: () async {
             await widget.dbService.addAllAppData(selectedApps.values.toList());
@@ -333,9 +335,13 @@ class _Home extends State<Home> {
                 onError: onFailure,
                 onTimeout: onFailure);
           },
-          color: Colors.greenAccent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          color: Colors.black,
           child: const Text("Done"),
-        )
+        ),
+        const Spacer(),
       ],
     );
   }

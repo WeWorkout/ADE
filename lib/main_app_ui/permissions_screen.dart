@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:ade/database/database_service.dart';
 import 'package:ade/main_app_ui/home.dart';
 import 'package:ade/timer_service/utils/foreground_service_utils.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -48,7 +47,6 @@ class _PermissionsScreenState extends State<PermissionsScreen>{
     final double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-        backgroundColor: Colors.greenAccent,
         body: Column(
                 children: [
                   SizedBox(height: screenHeight*0.07,),
@@ -152,13 +150,16 @@ class _PermissionsScreenState extends State<PermissionsScreen>{
       final double screenWidth = MediaQuery.of(context).size.width;
 
       return MaterialButton(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           padding: const EdgeInsets.all(10),
           onPressed: (drawOverOtherAppsPermissionGranted && usagePermissionGranted)
               ? () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => Home(widget.dbService)))
               : null,
           color: Colors.white,
           disabledColor: Colors.grey,
-          child: Text("Continue to App", style: TextStyle(fontSize: screenWidth*0.04),),
+          child: Text("Continue to App", style: TextStyle(fontSize: screenWidth*0.04, color: Colors.black),),
       );
     }
     Widget _usagePermissionWidget(){
@@ -173,7 +174,7 @@ class _PermissionsScreenState extends State<PermissionsScreen>{
             borderRadius: BorderRadius.circular(10)
           ),
           elevation: 10,
-          color: Colors.blue,
+          //color: Colors.blue,
           child: Column(
             children: [
               SizedBox(height: screenHeight*0.02),
@@ -197,6 +198,9 @@ class _PermissionsScreenState extends State<PermissionsScreen>{
                 height: screenHeight*0.01,
               ),
               MaterialButton(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
                 color: Colors.white,
                 disabledColor: Colors.grey,
                 onPressed: usagePermissionGranted
@@ -205,7 +209,7 @@ class _PermissionsScreenState extends State<PermissionsScreen>{
                   await _askForUsagePermission();
                   setState(() {});
                 },
-                child: Text("Grant", style: TextStyle(fontSize: screenWidth*0.03),),
+                child: Text("Grant", style: TextStyle(fontSize: screenWidth*0.03, color: Colors.black),),
               )
             ],
           ),
@@ -225,7 +229,6 @@ class _PermissionsScreenState extends State<PermissionsScreen>{
               borderRadius: BorderRadius.circular(10)
           ),
           elevation: 10,
-          color: Colors.blue,
           child: Column(
             children: [
               SizedBox(height: screenHeight*0.02),
@@ -249,6 +252,9 @@ class _PermissionsScreenState extends State<PermissionsScreen>{
                 height: screenHeight*0.01,
               ),
               MaterialButton(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
                 color: Colors.white,
                 disabledColor: Colors.grey,
                 onPressed: drawOverOtherAppsPermissionGranted
@@ -257,7 +263,7 @@ class _PermissionsScreenState extends State<PermissionsScreen>{
                   await _askForDisplayOverWidgetsPermission();
                   setState(() {});
                 },
-                child: Text("Grant", style: TextStyle(fontSize: screenWidth*0.03),),
+                child: Text("Grant", style: TextStyle(fontSize: screenWidth*0.03, color: Colors.black),),
               )
             ],
           ),

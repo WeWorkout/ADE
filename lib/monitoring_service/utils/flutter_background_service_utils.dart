@@ -1,7 +1,7 @@
 import 'package:ade/monitoring_service/monitoring_service.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 
-startMonitoringService() async{
+startMonitoringService() async {
   final monitoringService = FlutterBackgroundService();
   IosConfiguration iosConfiguration = IosConfiguration();
 
@@ -12,7 +12,7 @@ startMonitoringService() async{
       autoStart: true,
       isForegroundMode: true,
       autoStartOnBoot: true,
-      initialNotificationTitle: "ADE App is running!",
+      initialNotificationTitle: "IA is running in the background.",
       initialNotificationContent: "",
 
   );

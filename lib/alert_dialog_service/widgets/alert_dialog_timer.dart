@@ -46,9 +46,10 @@ class _AlertDialogTimerState extends State<AlertDialogTimer> {
         customWidths: CustomSliderWidths(
             trackWidth: 20, progressBarWidth: 15, handlerSize: 5),
         customColors: CustomSliderColors(
-            trackColor: Colors.grey,
+            shadowMaxOpacity: 0,
+            trackColor: Colors.white,
             dotColor: Colors.white,
-            progressBarColor: Theme.of(context).primaryColor),
+            progressBarColor: Theme.of(context).colorScheme.primary),
         size: MediaQuery.of(context).size.height * 0.2,
         startAngle: 270,
         angleRange: 360,
@@ -79,10 +80,10 @@ class _AlertDialogTimerState extends State<AlertDialogTimer> {
             growable: false,
             (int index) {
               return ChoiceChip(
-                selectedColor: Theme.of(context).primaryColor,
+                selectedColor: Colors.white,
                 label: Text(
                     '${(index + 1) * 5}m',
-                  style: TextStyle(color: widget.timeData["time"] == (index + 1) * 5 ? Colors.white : Colors.black),
+                  style: TextStyle(color: widget.timeData["time"] == (index + 1) * 5 ? Theme.of(context).colorScheme.primary : Colors.white),
                 ),
                 selected: widget.timeData["time"] == (index + 1) * 5,
                 onSelected: (bool selected) {

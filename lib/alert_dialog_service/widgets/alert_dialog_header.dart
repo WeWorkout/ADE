@@ -29,7 +29,7 @@ class AlertDialogHeader extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return IconButton(
-      color: Theme.of(context).primaryColor,
+      color: Colors.white,
       onPressed: () async{await AlertDialogService.closeAlertDialog();},
       icon: Icon(
         Icons.cancel,

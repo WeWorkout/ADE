@@ -122,7 +122,6 @@ class _LoadingBarState extends State<LoadingBar> {
     return SizedBox(
       height: screenHeight*0.35,
       child: AlertDialog(
-        backgroundColor: Colors.white,
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
         title: alertText,
         content: alertContent,

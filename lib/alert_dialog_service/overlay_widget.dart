@@ -16,8 +16,8 @@ class OverlayWidget extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: Theme.of(context).primaryColor),
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
-          color: Colors.white,
+          borderRadius: const BorderRadius.all(Radius.circular(20)),
+          color: Colors.black87,
         ),
         height: screenHeight * 0.5,
         width: screenWidth * 0.7,
