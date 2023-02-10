@@ -12,7 +12,7 @@ startMonitoringService() async {
       autoStart: true,
       isForegroundMode: true,
       autoStartOnBoot: true,
-      initialNotificationTitle: "IA is running in the background.",
+      initialNotificationTitle: "Inner Authority(background).",
       initialNotificationContent: "",
 
   );
