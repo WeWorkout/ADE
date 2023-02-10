@@ -4,7 +4,7 @@ import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 class AlertDialogUtils {
 
   static Future<void> showDialog() async {
-    await FlutterOverlayWindow.showOverlay(overlayTitle: "TEST", overlayContent: "CONTENT");
+    await FlutterOverlayWindow.showOverlay();
   }
 
   static Future<void> closeAlertDialog() async {

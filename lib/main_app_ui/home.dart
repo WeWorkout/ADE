@@ -37,12 +37,12 @@ class _Home extends State<Home> {
     final double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-        //backgroundColor: Theme.of(context).colorScheme.primary,
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Colors.black,
           elevation: 0,
-          title: const Text("Inner Authority", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25)),
+          leading: Padding( padding: EdgeInsets.all(screenWidth*0.01), child: const Image(image: AssetImage("assets/icons/ia_logo.png"),)),
+          title: Padding( padding: EdgeInsets.all(screenWidth*0.05), child: const Image(image: AssetImage("assets/icons/logoText.png"), color: Colors.white,)),
           actions: [
             InkWell(
                 onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => AboutApp()));},
@@ -329,7 +329,7 @@ class _Home extends State<Home> {
             Navigator.of(context).pop();
             LoadingBar.showLoadingDialog(
                 parentContext: context,
-                loadingText: "Restarting Monitoring Service",
+                loadingText: "Saving...",
                 statusFunction: getStatus,
                 onComplete: onComplete,
                 onError: onFailure,

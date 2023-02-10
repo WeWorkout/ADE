@@ -14,24 +14,7 @@ class TimerTaskHandler extends TaskHandler {
   @override
   Future<void> onStart(DateTime timestamp, SendPort? sendPort) async {
     debugPrint("OnStart of timer service started!");
-    Timer.periodic(const Duration(seconds: 1), (timer) async {
-      bool isDone = false;
-      DateTime currentTime = DateTime.now();
-
-      if(finishTime.isBefore(currentTime) || finishTime.isAtSameMomentAs(currentTime)){
-        timer.cancel();
-        await _finalizeTimerService();
-        isDone = true;
-      }
-      if(!isDone){
-        bool updateNotification = await updateForegroundServiceNotification(finishTime, currentTime);
-        if(!updateNotification){
-          debugPrint("Notification was not updated!");
-        }
-      }
-
-    });
-
+    _startTimer(finishTime);
   }
 
   @override
@@ -47,7 +30,18 @@ class TimerTaskHandler extends TaskHandler {
   }
 
   @override
-  void onButtonPressed(String id) {
+  void onButtonPressed(String id) async{
+    switch(id){
+      case UPDATE_TIMER_BUTTON_KEY:
+        await _finalizeTimerService();
+        break;
+      case STOP_TIMER_BUTTON_KEY:
+        await killOngoingServiceIfAny();
+        break;
+      default:
+        debugPrint("WTF bruh....button command be cappin");
+        break;
+    }
   }
 
   @override
@@ -55,8 +49,30 @@ class TimerTaskHandler extends TaskHandler {
   }
 }
 
-_finalizeTimerService() async{
+Future<void> _startTimer(DateTime finishTime) async{
+  Timer.periodic(const Duration(seconds: 1), (timer) async {
+    timer.cancel();
+    bool isDone = false;
+    DateTime currentTime = DateTime.now();
+
+    if(finishTime.isBefore(currentTime) || finishTime.isAtSameMomentAs(currentTime)){
+      await _finalizeTimerService();
+      isDone = true;
+    }
+
+    if(!isDone){
+      bool updateNotification = await updateForegroundServiceNotification(finishTime, currentTime);
+      if(!updateNotification){
+        debugPrint("Notification was not updated!");
+      }
+    }
+    _startTimer(finishTime);
+
+  });
+}
+
+Future<void>  _finalizeTimerService() async{
   debugPrint("Timer is complete!");
-  await AlertDialogService.createAlertDialog();
+  await AlertDialogService.createAlertDialog(fromTimerService: true);
   await killOngoingServiceIfAny();
 }

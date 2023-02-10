@@ -19,7 +19,7 @@ class AboutApp extends StatelessWidget{
               },
               child: Icon(Icons.arrow_back_ios, size: screenWidth*0.06, color: Colors.white,)
           ),
-          title: const Text("About Inner Authority", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25)),
+          title: Padding( padding: EdgeInsets.all(screenWidth*0.05), child: const Image(image: AssetImage("assets/icons/logoText.png"), color: Colors.white,)),
         ),
         body: Column(
           children: [

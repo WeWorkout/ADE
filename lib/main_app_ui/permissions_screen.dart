@@ -50,8 +50,10 @@ class _PermissionsScreenState extends State<PermissionsScreen>{
         body: Column(
                 children: [
                   SizedBox(height: screenHeight*0.07,),
+                  _logo(),
+                  SizedBox(height: screenHeight*0.03,),
                   Text("Permissions Required", style: TextStyle(fontSize: screenWidth*0.06,),),
-                  SizedBox(height: screenHeight*0.05,),
+                  SizedBox(height: screenHeight*0.02,),
                   _aboutPermissionsSection(),
                   SizedBox(height: screenHeight*0.04,),
                   Row(
@@ -64,11 +66,28 @@ class _PermissionsScreenState extends State<PermissionsScreen>{
                   ),
                   const Spacer(),
                   drawOverOtherAppsPermissionGranted && usagePermissionGranted ? _continueToAppButton() : const SizedBox.shrink(),
-                  SizedBox(height: screenHeight*0.04,)
+                  SizedBox(height: screenHeight*0.02,)
                 ],
               )
              );
 
+    }
+
+    Widget _logo(){
+      final double screenHeight = MediaQuery.of(context).size.height;
+      final double screenWidth = MediaQuery.of(context).size.width;
+
+      return Card(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10)
+        ),
+        child: SizedBox(
+            height: screenHeight*0.15,
+            width: screenWidth*0.6,
+            child: const Image(image: AssetImage("assets/icons/logoWithText.png"),)
+        ),
+      );
     }
 
     Widget _aboutPermissionsSection(){

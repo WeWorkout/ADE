@@ -8,6 +8,8 @@ const String APP_NAME_CUSTOM_DATA_KEY = "App_Name";
 const String APP_ID_CUSTOM_DATA_KEY = "App_ID";
 const String FINISH_TIME_CUSTOM_DATA_KEY = "Duration_Time";
 const String SERVICE_RUNNING_STATUS_MESSAGE_KEY = "isServiceRunning";
+const String UPDATE_TIMER_BUTTON_KEY = "UpdateTimer";
+const String STOP_TIMER_BUTTON_KEY = "StopTimer";
 
 void initNotificationForegroundTask(DateTime finishTime) {
   debugPrint("Initializing Time Foreground Service!");
@@ -25,6 +27,11 @@ void initNotificationForegroundTask(DateTime finishTime) {
         name: 'launcher',
         //backgroundColor: Colors.blue,
       ),
+      buttons: [
+        // Handled in the handler according to the id
+        const NotificationButton(id: UPDATE_TIMER_BUTTON_KEY, text: "Update"),
+        const NotificationButton(id: STOP_TIMER_BUTTON_KEY, text: "Stop")
+      ]
 
     ),
 
@@ -83,7 +90,7 @@ Future<bool> storeForegroundSessionData(DateTime finishTime) async{
   return true;
 }
 
-killOngoingServiceIfAny() async {
+Future<void> killOngoingServiceIfAny() async {
   debugPrint("Killing timer service");
   if (await FlutterForegroundTask.isRunningService) {
     bool isDataCleared = await FlutterForegroundTask.clearAllData();
