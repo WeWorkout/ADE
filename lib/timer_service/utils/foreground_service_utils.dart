@@ -25,7 +25,6 @@ void initNotificationForegroundTask(DateTime finishTime) {
         resType: ResourceType.mipmap,
         resPrefix: ResourcePrefix.ic,
         name: 'launcher',
-        //backgroundColor: Colors.blue,
       ),
       buttons: [
         // Handled in the handler according to the id

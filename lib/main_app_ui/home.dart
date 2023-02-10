@@ -25,6 +25,7 @@ class _Home extends State<Home> {
 
   // Status 0:In Progress, 1:Complete Successfully, 2:Failed
   Set<int> status = {0};
+  final int maxAppsAllowed = 5;
 
   @override
   void initState() {
@@ -128,15 +129,11 @@ class _Home extends State<Home> {
     restartMonitoringService();
     LoadingBar.showLoadingDialog(
         parentContext: context,
-        loadingText: "Restarting Monitoring Service",
+        loadingText: "Saving...",
         statusFunction: getStatus,
         onComplete: onComplete,
         onError: onFailure,
         onTimeout: onFailure);
-  }
-
-  onAddComplete() {
-
   }
 
   onFailure() {
@@ -278,7 +275,7 @@ class _Home extends State<Home> {
     return Column(
       children: [
         SizedBox(height: screenHeight*0.02,),
-        Text("Select Applications", style: TextStyle(fontSize: screenWidth*0.04),),
+        Text("Select Applications [${selectedApps.keys.length}/$maxAppsAllowed]", style: TextStyle(fontSize: screenWidth*0.04),),
         SizedBox(height: screenHeight*0.04,),
         SizedBox(
           height: screenHeight*0.6,
@@ -308,9 +305,18 @@ class _Home extends State<Home> {
                             });
                           }
                               :() {
-                            setStateDialog((){
-                              selectedApps.putIfAbsent(appInfo.packageName!, () => ApplicationData(appInfo.name!, appInfo.packageName!, appInfo.icon));
-                            });
+                            if(selectedApps.length < maxAppsAllowed) {
+                              setStateDialog(() {
+                                selectedApps.putIfAbsent(
+                                    appInfo.packageName!, () =>
+                                    ApplicationData(
+                                        appInfo.name!, appInfo.packageName!,
+                                        appInfo.icon));
+                              });
+                            } else {
+                              // Show Dialog
+                              _maxAppsReachedAlertDialog(context);
+                            }
                           },
                           leading: Image.memory(apps[index].icon!, width: screenWidth*0.1),
                           title: Text(apps[index].name!),
@@ -324,16 +330,22 @@ class _Home extends State<Home> {
         const Spacer(),
         MaterialButton(
           onPressed: () async {
-            await widget.dbService.addAllAppData(selectedApps.values.toList());
-            restartMonitoringService();
-            Navigator.of(context).pop();
-            LoadingBar.showLoadingDialog(
-                parentContext: context,
-                loadingText: "Saving...",
-                statusFunction: getStatus,
-                onComplete: onComplete,
-                onError: onFailure,
-                onTimeout: onFailure);
+            if(selectedApps.keys.toSet().difference(widget.dbService.getAllAppPackageNames().toSet()).isNotEmpty
+            || widget.dbService.getAllAppPackageNames().toSet().difference(selectedApps.keys.toSet()).isNotEmpty) {
+              await widget.dbService.updateAllAppData(
+                  selectedApps.values.toList());
+              restartMonitoringService();
+              Navigator.of(context).pop();
+              LoadingBar.showLoadingDialog(
+                  parentContext: context,
+                  loadingText: "Saving...",
+                  statusFunction: getStatus,
+                  onComplete: onComplete,
+                  onError: onFailure,
+                  onTimeout: onFailure);
+            } else {
+              Navigator.of(context).pop();
+            }
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -343,6 +355,24 @@ class _Home extends State<Home> {
         ),
         const Spacer(),
       ],
+    );
+  }
+
+  _maxAppsReachedAlertDialog(BuildContext context) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: const Text("Oops! Cannot add more apps."),
+        content: const Text("Please remove an app if you wish to add this app."),
+        actions: [
+          TextButton(
+              onPressed: () => {Navigator.pop(context)},
+              child: const Text("Ok"))
+        ],
+      )
     );
   }
 

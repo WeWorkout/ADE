@@ -1,6 +1,8 @@
+import 'package:ade/main_app_ui/utils/fonts.dart';
 import 'package:ade/main_app_ui/widgets/devs/abhinav_card.dart';
 import 'package:ade/main_app_ui/widgets/devs/purushottam_card.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AboutApp extends StatelessWidget{
   @override
@@ -37,10 +39,70 @@ class AboutApp extends StatelessWidget{
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
-    return Container(
-      color: Colors.red,
-      height: screenHeight*0.5,
-      width: screenWidth*0.8,
+    return Card(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10)
+      ),
+      color: Colors.black,
+      clipBehavior: Clip.hardEdge,
+      child: SizedBox(
+        width: screenWidth * 0.8,
+        height: screenHeight * 0.45,
+        child: Column(
+          children: [
+            SizedBox(height: screenHeight * 0.02),
+            _logo(context),
+            const Spacer(),
+            _content(context),
+            const Spacer(),
+            _sourceCodeLink(context),
+            const Spacer(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _content(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    return SizedBox(
+        height: screenHeight * 0.1,
+        child: Center(child: Text("Unplug from the MATRIX!", style: Fonts.header2(color: Colors.white, underLine: true, isItalic: true),)));
+  }
+
+  Widget _sourceCodeLink(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
+
+    return InkWell(
+      onTap: () => _openGithubSourceCodeLink(),
+      child: Column(
+        children: [
+          SizedBox(
+              height: screenHeight*0.07,
+              width: screenWidth*0.5,
+              child: const Image(image: AssetImage("assets/icons/githubIcon.png"))
+          ),
+          Text("Source Code link", style: TextStyle(fontSize: screenWidth*0.03, decoration: TextDecoration.underline),)
+        ],
+      ),
+    );
+  }
+
+  Widget _logo(BuildContext context){
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
+
+    return Card(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10)
+      ),
+      child: SizedBox(
+          height: screenHeight*0.15,
+          width: screenWidth*0.6,
+          child: const Image(image: AssetImage("assets/icons/logoWithText.png"),)
+      ),
     );
   }
 
@@ -99,10 +161,10 @@ class AboutApp extends StatelessWidget{
         return showDialog(
             context: context,
             builder: (context){
-              return SimpleDialog(
+              return const SimpleDialog(
                   backgroundColor: Colors.transparent,
                   children: [
-                    const PurushottamCard()
+                    PurushottamCard()
               ]
               );
             });
@@ -110,15 +172,31 @@ class AboutApp extends StatelessWidget{
         return showDialog(
             context: context,
             builder: (context){
-              return SimpleDialog(
+              return const SimpleDialog(
                   backgroundColor: Colors.transparent,
                   children: [
-                    const AbhinavCard()
+                    AbhinavCard()
                   ]
               );
             });
       default: debugPrint("Pehchaan Kaun!: $dev");
         return;
+    }
+  }
+
+  _openGithubSourceCodeLink() async{
+    String url = "https://github.com/WeWorkout/ADE/tree/master";
+    try{
+      if (await canLaunchUrl(Uri.parse(url))){
+        await launchUrl(Uri.parse(url));
+      }
+
+      else {
+        throw "Could not launch $url";
+      }
+    }
+    catch(e){
+      debugPrint("Error while launching URL: $e");
     }
   }
 

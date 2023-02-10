@@ -10,9 +10,10 @@ class PurushottamCard extends StatelessWidget{
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
     return Card(
-      color: Colors.blueGrey.shade200,
+      color: Colors.grey,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 5)
       ),
       elevation: 10,
       child: SizedBox(
@@ -21,7 +22,7 @@ class PurushottamCard extends StatelessWidget{
         child: ListView(
           children:  [
             SizedBox(height: screenHeight*0.02,),
-            Center(child: Text("Purushottam", style: TextStyle(fontSize:screenWidth*0.06,fontStyle: FontStyle.italic),)),
+            Center(child: Text("Purushottam", style: TextStyle(fontSize:screenWidth*0.06,fontStyle: FontStyle.italic))),
             const Divider(thickness: 2.0,),
             SizedBox(height: screenHeight*0.02,),
             SizedBox(

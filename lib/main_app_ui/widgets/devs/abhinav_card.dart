@@ -11,9 +11,10 @@ class AbhinavCard extends StatelessWidget{
     final double screenWidth = MediaQuery.of(context).size.width;
 
     return Card(
-      color: Colors.blueGrey.shade200,
+      color: Colors.grey,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 5)
       ),
       elevation: 10,
       child: SizedBox(

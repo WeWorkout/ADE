@@ -60,12 +60,23 @@ class DatabaseService {
     return _box.values.toList();
   }
 
+  List<String> getAllAppPackageNames() {
+    return _box.keys.map((e) => e as String).toList();
+  }
+
   Future<void> addAppData(ApplicationData appData) async {
     debugPrint("Adding ${appData.appId} to box!");
     await _box.put(appData.appId, appData);
   }
 
   Future<void> addAllAppData(List<ApplicationData> appDatas) async {
+    for(ApplicationData appData in appDatas) {
+      await addAppData(appData);
+    }
+  }
+
+  Future<void> updateAllAppData(List<ApplicationData> appDatas) async {
+    await _box.clear();
     for(ApplicationData appData in appDatas) {
       await addAppData(appData);
     }
