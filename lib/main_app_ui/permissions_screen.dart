@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:ade/database/database_service.dart';
 import 'package:ade/main_app_ui/home.dart';
+import 'package:ade/main_app_ui/utils/fonts.dart';
 import 'package:ade/timer_service/utils/foreground_service_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
@@ -105,7 +106,7 @@ class _PermissionsScreenState extends State<PermissionsScreen>{
             ),
             child: Column(
               children: [
-                SizedBox(height: screenHeight*0.03,),
+                SizedBox(height: screenHeight*0.01,),
                 Row(
                   children: [
                     SizedBox(width: screenWidth*0.1,),
@@ -143,7 +144,11 @@ class _PermissionsScreenState extends State<PermissionsScreen>{
                     )
                   ],
                 ),
-                SizedBox(height: screenHeight*0.04,),
+                SizedBox(height: screenHeight*0.02,),
+                const Divider(thickness: 3,),
+                SizedBox(height: screenHeight*0.01,),
+                _noDataCollectedText(),
+                SizedBox(height: screenHeight*0.01,),
                 InkWell(
                   onTap: () => _openGithubSourceCodeLink(),
                   child: Column(
@@ -162,6 +167,17 @@ class _PermissionsScreenState extends State<PermissionsScreen>{
           ),
         ),
       );
+    }
+
+    Widget _noDataCollectedText(){
+      return RichText(text: TextSpan(text: "The App does ",
+          children: [
+            TextSpan(text: "NOT", style: Fonts.header3(color: Colors.blue, underLine: true)),
+            const TextSpan(text: " collect any data whatsoever!")
+            ],
+          style: Fonts.header4(color: Colors.white,underLine: true)
+          ),
+        );
     }
 
     Widget _continueToAppButton(){

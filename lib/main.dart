@@ -19,7 +19,7 @@ void overlayMain() async {
 
   runApp(MaterialApp(
       theme: Themes.mainTheme(),
-      debugShowCheckedModeBanner: true,
+      debugShowCheckedModeBanner: false,
       home: OverlayWidget()
   ));
 }
@@ -47,6 +47,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: Themes.mainTheme(),
       home: screenToDisplay,
     );

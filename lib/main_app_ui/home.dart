@@ -1,6 +1,7 @@
 import 'package:ade/database/database_service.dart';
 import 'package:ade/dtos/application_data.dart';
 import 'package:ade/main_app_ui/about_page.dart';
+import 'package:ade/main_app_ui/utils/fonts.dart';
 import 'package:ade/main_app_ui/widgets/loading_dialog.dart';
 import 'package:ade/main_app_ui/widgets/yes_no_dialog.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +54,9 @@ class _Home extends State<Home> {
         ),
         body: Column(
           children: [
-            SizedBox(height: screenHeight*0.03,),
+            SizedBox(height: screenHeight*0.04,),
+            Text("Enable feature on these Apps", style: Fonts.header2(color: Colors.white, underLine: true, isItalic: true),),
+            SizedBox(height: screenHeight*0.04,),
             _addAppsButton(context),
             SizedBox(height: screenHeight*0.03,),
             _listOfMonitoringApps(context)
