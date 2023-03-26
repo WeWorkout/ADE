@@ -2,7 +2,9 @@
 
 ---
 
-![Test](assets/icons/logoWithTextAndBg.jpg)
+<p align="center">
+  <img src="assets/icons/logoWithTextAndBg.jpg" />
+</p>
 
 ---
 
