@@ -1,16 +1,36 @@
-# ade
+# [🚧 Work in Progress] Inner Authority
 
-A minimal and effecient app to help de-addict yourself from mobile apps.
+---
 
-## Getting Started
+![Test](assets/icons/logoWithTextAndBg.jpg)
 
-This project is a starting point for a Flutter application.
+---
 
-A few resources to get you started if this is your first Flutter project:
+This repository contains the source code for the app called Inner Authority.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+# Downloads
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+---
+- [Android (Play Store)](https://play.google.com/store/apps/details?id=com.ade.ade&hl=en&gl=US)
+- iOS (🚧WIP)
+
+# Philosophy
+
+---
+At the heart of our app is a philosophy of mindfulness and conscious decision-making. In a world where we're often chasing quick hits of dopamine or fleeting moments of satisfaction, we wanted to offer a different kind of consumer product – one that prioritizes long-term progress and helps you cultivate greater awareness in your daily life.
+
+Our philosophy is to develop apps designed to support you in making thoughtful choices that align with your values and aspirations, rather than simply catering to your immediate desires. By focusing on developing more mindful habits and behaviors over time, you can experience a deeper sense of fulfillment and purpose in your life.
+
+# Features
+
+---
+## Supported Features
+
+- Popup timer on selected apps
+- Select upto 5 apps to show the popup on
+
+
+## Planned Features
+
+- More profiles for stricter or lenient sessions (More details on this soon!)
+- Themes
